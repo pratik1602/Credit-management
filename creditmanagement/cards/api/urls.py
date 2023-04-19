@@ -29,7 +29,6 @@ urlpatterns = [
     #------------ ADD USERS PAYMENT RECORD (ADMIN ACCESS) --------------#
     path ('add-payment-record', UserCardPayemtRecord.as_view(), name="UserCardPayemtRecord"),
 
-    path ('all-payment-record-list', PaymentRecords.as_view(), name="GetAllPaymentRecords"),
 
 
 ]
