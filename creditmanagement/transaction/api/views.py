@@ -24,7 +24,6 @@ class PaymentRecords(APIView):
                 transaction_id = request.GET.get("transaction_id")
                 user_id = request.GET.get("user_id")
                 card_number = request.GET.get("card_number")
-                print(card_number)
                 if transaction_id != None or 0:
                     try:
                         record_obj = Transaction.objects.get(transaction_id = transaction_id)
