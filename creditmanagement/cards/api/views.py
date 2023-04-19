@@ -386,6 +386,7 @@ class UserCardPayemtRecord(APIView):
                         data["admin"] = get_admin.id
                         serializer = UserCardPaymentSerializer(data=data)
                         if serializer.is_valid():
+                            serializer.save()
                             get_record = Transaction.objects.get(transaction_id = serializer.data["transaction_id"])
                             get_record.user = card_obj.user_id
                             get_record.save()
