@@ -94,7 +94,7 @@ class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ['id','first_name', 'last_name','email', 'phone_no', 'aadhar', 'pan', 'cheque', 'tc', 'is_verified', 'is_active', 'otp_verified' ]
+        fields = ['id','profile_pic','first_name', 'last_name','email', 'phone_no', 'aadhar', 'pan', 'cheque', 'tc', 'is_verified', 'is_active', 'otp_verified' ]
         # exclude = ['password', 'groups', 'user_permissions']
 
 

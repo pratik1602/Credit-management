@@ -20,7 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ["id", "email", "first_name", "last_name", "profile_pic", "under_by"]
+        fields = ["id", "first_name", "last_name", "under_by"]
 
 #------------------------- USERS CARDS SERIALIZER --------------------#
 
@@ -29,7 +29,7 @@ class AllCardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Card
         # fields = "__all__"
-        fields = ['card_id',"user_id",'card_bank_name','card_type', 'card_category', 'card_number','card_network','card_holder_name' ,'card_photo','card_exp_date' ,'card_cvv','due_date','due_amount', 'card_status', 'commission', 'profit_amount','updated_by', 'created_by', 'paid_by', 'created_at', 'modified_at']
+        fields = ['card_id',"user_id",'card_bank_name','card_type', 'card_category', 'card_number','card_network','card_holder_name' ,'card_photo','card_exp_date' ,'card_cvv','due_date','due_amount', 'commission', 'profit_amount']
 
 #------------------------- ADMIN CARDS SERIALIZER ---------------------#
 
