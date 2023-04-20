@@ -79,7 +79,7 @@ class UserCardPayemtRecord(APIView):
                 data = request.data
                 if data["card"] != "" and data["paid_amount"] != "" and data["due_paid_date"] != "" and data["due_paid_time"] != "" and data["due_paid_through"] != "": 
                     try:
-                        card_obj = Card.objects.get(card_id = data["card"])
+                        card_obj = Card.objects.get(card_id = data["card"], user_id__under_by = get_admin)
                     except:
                         return badRequest("Card doesn't exists !!!")
                     data["card"] = card_obj.card_id
