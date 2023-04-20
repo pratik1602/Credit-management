@@ -96,7 +96,7 @@ class Card(models.Model):
     card_network = models.CharField(max_length=50)
     card_number = models.PositiveBigIntegerField( unique=True) #validators=[validate_card_number],
     card_holder_name= models.CharField(max_length=100)
-    card_photo = models.CharField(max_length=100)   
+    card_photo = models.ImageField(upload_to= "Images\Card", default="")
     card_exp_date = models.DateField() #validators=[is_expired]
     card_cvv = models.IntegerField() #validators=[validate_cvv]
     due_date = models.DateField(null=True) #validators=[has_expired]

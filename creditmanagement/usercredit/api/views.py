@@ -616,7 +616,6 @@ class PasswordResetView(APIView):
         if data["email"] != "" and data["password"] != "" and data["password2"] != "":
             if data["password"] == data["password2"]:
                 get_user = User.objects.get(email = data["email"])
-                print("user", get_user)
                 if get_user:
                     get_user.set_password(data["password"])
                     get_user.save()

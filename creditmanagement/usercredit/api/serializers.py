@@ -9,7 +9,6 @@ from core.response import *
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type':'password'}, write_only=True)
-    # tc = serializers.BooleanField(required=True)
 
     class Meta:
         model = User
@@ -18,19 +17,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'password' : {'write_only' : True},
         }
-
-    # def validate(self, attrs):
-    #     password = attrs.get('password')
-    #     password2 = attrs.get('password2')
-    #     tc = attrs.get('tc')
-
-    #     if tc == False:
-    #         raise serializers.ValidationError("Terms and Condition (tc) must be true !")
-
-    #     if password != password2:
-    #         return badRequest("Password and Confirm password doesn't matched !!!")
-
-        # return super().validate(attrs)
 
     def create(self, validated_data):
         validated_data["refer_code"] = generate_ref_code()

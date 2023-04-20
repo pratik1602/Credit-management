@@ -138,7 +138,6 @@ class UserCardAPIView(APIView):
                         return onSuccess("Card updated Successfully !!!", serializer.data)
                     else:
                         return badRequest("Something went wrong !!!")
-
                 except:
                     return badRequest("Card doesn't exixts !!!")
             else:
@@ -301,7 +300,7 @@ class UserCard(APIView):
             get_admin = User.objects.get(id = token["user_id"])
             if get_admin and get_admin.is_admin:
                 data = request.data
-                if data["card_bank_name"] != "" and data["card_category"] != "" and data["card_number"] != "" and data["card_network"] != "" and data["card_holder_name"] != "" and data["card_photo"] != "" and data["card_exp_date"] != "" and  data["card_cvv"] != "" and data["due_date"] != "" and data["due_amount"] != "":
+                if data["card_bank_name"] != "" and data["card_category"] != "" and data["card_number"] != "" and data["card_network"] != "" and data["card_holder_name"] != "" and data["card_photo"] != "" and data["card_exp_date"] != "" and  data["card_cvv"] != "" and data["due_date"] != "" and data["due_amount"] != "" and data["commission"] != "":
                     try:
                         get_user = User.objects.get(id = data["user_id"], under_by = get_admin.id, is_verified = True)
                     except:
@@ -309,7 +308,8 @@ class UserCard(APIView):
                     user_card_number = Card.objects.filter(card_number = data["card_number"])
                     if not user_card_number.exists():
                         data["due_amount"] = "%.2f" % float(data["due_amount"])
-                        serializer =  UserCardSerializer(data=data)
+                        data["commission"] = "%.2f" % float(data["commission"])
+                        serializer =  CreateUpdateUserCardSerializer(data=data)
                         if serializer.is_valid():
                             serializer.save()
                             getCard = Card.objects.get(card_id=serializer.data["card_id"])
@@ -338,27 +338,30 @@ class UserCard(APIView):
             get_admin = User.objects.get(id = token["user_id"])
             if get_admin and get_admin.is_admin:
                 data = request.data
-                try:
-                    User.objects.get(id = data["user_id"], under_by = get_admin.id, is_verified = True)
-                except:
-                    return badRequest("User not found !!!")
-                try:
-                    get_card = Card.objects.get(card_id = data["card_id"])
-                except:
-                    return badRequest("Card not found !!!s") 
-                data["due_amount"] = "%.2f" % float(data["due_amount"])
-                serializer = UserCardSerializer(get_card, data=data, partial= True)
-                if serializer.is_valid():
-                    serializer.save()
-                    get_card = Card.objects.get(card_id = serializer.data["card_id"])
-                    get_card.profit_amount = get_card.due_amount * get_card.commission / 100
-                    get_card.profit_amount = "%.2f" % float(get_card.profit_amount)
-                    get_card.updated_by = get_admin
-                    get_card.save()
-                    return onSuccess("Card Updated Successfully !!!", serializer.data)
+                if data["card_bank_name"] != "" and data["card_category"] != "" and data["card_number"] != "" and data["card_network"] != "" and data["card_holder_name"] != "" and data["card_photo"] != "" and data["card_exp_date"] != "" and  data["card_cvv"] != "" and data["due_date"] != "" and data["due_amount"] != "" and data["commission"] != "":
+                    try:
+                        User.objects.get(id = data["user_id"], under_by = get_admin.id, is_verified = True)
+                    except:
+                        return badRequest("User not found !!!")
+                    try:
+                        get_card = Card.objects.get(card_id = data["card_id"])
+                    except:
+                        return badRequest("Card not found !!!s") 
+                    data["due_amount"] = "%.2f" % float(data["due_amount"])
+                    data["commission"] = "%.2f" % float(data["commission"])
+                    serializer = CreateUpdateUserCardSerializer(get_card, data=data, partial= True)
+                    if serializer.is_valid():
+                        serializer.save()
+                        get_card = Card.objects.get(card_id = serializer.data["card_id"])
+                        get_card.profit_amount = get_card.due_amount * get_card.commission / 100
+                        get_card.profit_amount = "%.2f" % float(get_card.profit_amount)
+                        get_card.updated_by = get_admin
+                        get_card.save()
+                        return onSuccess("Card Updated Successfully !!!", serializer.data)
+                    else:
+                        return badRequest("Something went wrong !!!")
                 else:
-                    return badRequest("Something went wrong !!!")
-                           
+                    return badRequest("Fields is missing !!!")           
             else:
                 return badRequest("Admin not found !!!")
         else:
