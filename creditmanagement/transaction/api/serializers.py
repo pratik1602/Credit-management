@@ -22,12 +22,18 @@ class CardDetailsSerializer(serializers.ModelSerializer):
         model = Card
         fields = ['user_id','card_id','card_number', 'card_bank_name', 'card_holder_name', 'commission']
 
+class UserDetailsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "profile_pic"]
+
 class AllTransactionRecordSerializer(serializers.ModelSerializer):
     card = CardDetailsSerializer()
+    user = UserDetailsSerializer()
 
     class Meta:
         model = Transaction
-        fields = ["transaction_id","admin","card","due_paid_date","due_paid_time", "paid_amount", "due_paid_through", "user"]
+        fields = ["transaction_id","admin","user", "card", "due_paid_date","due_paid_time", "paid_amount", "due_paid_through"]
 
 class EditTransactionRecordSerializer(serializers.ModelSerializer):
 

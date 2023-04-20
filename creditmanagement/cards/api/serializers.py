@@ -22,16 +22,13 @@ class CreateUpdateUserCardSerializer(serializers.ModelSerializer):
         fields = ['card_id','card_bank_name', 'card_category' ,'card_number','card_network','card_holder_name' ,'card_photo','card_exp_date' ,'card_cvv','commission','due_date','due_amount'] 
 
 
-
-
-
 #---------------------- USER'S PROFILE SERIALIZER -------------------#
 
 class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ["id", "first_name", "last_name", "under_by"]
+        fields = ["id","profile_pic","first_name", "last_name", "under_by"]
 
 #------------------------- USERS CARDS SERIALIZER --------------------#
 
