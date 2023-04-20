@@ -199,38 +199,38 @@ class AdminCards(APIView):
             get_admin = User.objects.get(id = token["user_id"])
             if get_admin and get_admin.is_admin:
                 data = request.data
-                if data["card_type"] == "Debit Card":
-                    if data["card_bank_name"] != "" and data["card_number"] != "" and data["card_network"] != "" and data["card_holder_name"] != "" and data["card_photo"] != "" and data["card_exp_date"] != "" and  data["card_cvv"] != ""  and data["available_balance"] != "" and data["card_type"] != "":
-                        user_card_number = Card.objects.filter(card_number = data["card_number"])
-                        if not user_card_number:   
-                            data["user_id"] = get_admin.id
-                            data["available_balance"] = "%.2f" % float(data["available_balance"])
-                            serializer = AdminDebitCardSerializer(data=data)
-                            if serializer.is_valid():
-                                serializer.save()
-                                return onSuccess("Debit card added successfully !!!", serializer.data)
-                            else:
-                                return badRequest("Something went wrong !!!")
+                    # if data["card_bank_name"] != "" and data["card_number"] != "" and data["card_network"] != "" and data["card_holder_name"] != "" and data["card_photo"] != "" and data["card_exp_date"] != "" and  data["card_cvv"] != ""  and data["available_balance"] != "" and data["card_type"] != "":
+                    #     user_card_number = Card.objects.filter(card_number = data["card_number"])
+                    #     if not user_card_number:   
+                    #         data["user_id"] = get_admin.id
+                    #         data["available_balance"] = "%.2f" % float(data["available_balance"])
+                    #         serializer = AdminDebitCardSerializer(data=data)
+                    #         if serializer.is_valid():
+                    #             serializer.save()
+                    #             return onSuccess("Debit card added successfully !!!", serializer.data)
+                    #         else:
+                    #             return badRequest("Something went wrong !!!")
+                    #     else:
+                    #         return badRequest("Card with this card number already exists !!!")
+                    # else:
+                    #     return badRequest("Fields is missing !!!")
+                # else:
+                if data["card_bank_name"] != "" and data["card_category"] != "" and data["card_number"] != "" and data["card_network"] != "" and data["card_holder_name"] != "" and data["card_photo"] != "" and data["card_exp_date"] != "" and  data["card_cvv"] != ""  and data["credit_amount"] != "":
+                    user_card_number = Card.objects.filter(card_number = data["card_number"])
+                    if not user_card_number:   
+                        data["user_id"] = get_admin.id
+                        data["credit_amount"] = "%.2f" % float(data["credit_amount"])
+                        serializer = AdminCreditCardSerializer(data=data)
+                        if serializer.is_valid():
+                            serializer.save()
+                            return onSuccess("Credit card added successfully !!!", serializer.data)
                         else:
-                            return badRequest("Card with this card number already exists !!!")
+                            return badRequest(serializer.errors)
+                            # return badRequest("Something went wrong !!!")
                     else:
-                        return badRequest("Fields is missing !!!")
+                        return badRequest("Card with this card number already exists !!!")
                 else:
-                    if data["card_bank_name"] != "" and data["card_category"] != "" and data["card_number"] != "" and data["card_network"] != "" and data["card_holder_name"] != "" and data["card_photo"] != "" and data["card_exp_date"] != "" and  data["card_cvv"] != ""  and data["credit_amount"] != "" and data["card_type"] != "":
-                        user_card_number = Card.objects.filter(card_number = data["card_number"])
-                        if not user_card_number:   
-                            data["user_id"] = get_admin.id
-                            data["credit_amount"] = "%.2f" % float(data["credit_amount"])
-                            serializer = AdminCreditCardSerializer(data=data)
-                            if serializer.is_valid():
-                                serializer.save()
-                                return onSuccess("Credit card added successfully !!!", serializer.data)
-                            else:
-                                return badRequest("Something went wrong !!!")
-                        else:
-                            return badRequest("Card with this card number already exists !!!")
-                    else:
-                        return badRequest("Fields is missing !!!")
+                    return badRequest("Fields is missing !!!")
             else:
                 return badRequest("Admin not found !!!")
         else:
@@ -241,32 +241,32 @@ class AdminCards(APIView):
         if token:
             get_admin = User.objects.get(id = token["user_id"])
             if get_admin and get_admin.is_admin:
-                if data["card_type"] == "Debit Card":
-                    try:
-                        data = request.data
-                        get_card = Card.objects.get(card_id = data["card_id"])
-                        data["available_balance"] = "%.2f" % float(data["available_balance"])
-                        serializer = AdminAllcardSerializer(get_card ,data=data, partial = True)
-                        if serializer.is_valid():
-                            serializer.save()
-                            return onSuccess("Card updated Successfully !!!", serializer.data)
-                        else:
-                            return badRequest("Something went wrong !!! ")
-                    except:
-                        return badRequest("Card doesn't exixts !!!")
+                # if data["card_type"] == "Debit Card":
+                #     try:
+                #         data = request.data
+                #         get_card = Card.objects.get(card_id = data["card_id"])
+                #         data["available_balance"] = "%.2f" % float(data["available_balance"])
+                #         serializer = AdminAllcardSerializer(get_card ,data=data, partial = True)
+                #         if serializer.is_valid():
+                #             serializer.save()
+                #             return onSuccess("Card updated Successfully !!!", serializer.data)
+                #         else:
+                #             return badRequest("Something went wrong !!! ")
+                #     except:
+                #         return badRequest("Card doesn't exixts !!!")
+                # else:
+                data = request.data
+                try:
+                    get_card = Card.objects.get(card_id = data["card_id"])
+                except:
+                    return badRequest("Card doesn't exixts !!!")
+                data["credit_amount"] = "%.2f" % float(data["credit_amount"])
+                serializer = AdminCreditCardSerializer(get_card ,data=data, partial = True)
+                if serializer.is_valid():
+                    serializer.save()
+                    return onSuccess("Card updated Successfully !!!", serializer.data)
                 else:
-                    try:
-                        data = request.data
-                        get_card = Card.objects.get(card_id = data["card_id"])
-                        data["credit_amount"] = "%.2f" % float(data["credit_amount"])
-                        serializer = AdminAllcardSerializer(get_card ,data=data, partial = True)
-                        if serializer.is_valid():
-                            serializer.save()
-                            return onSuccess("Card updated Successfully !!!", serializer.data)
-                        else:
-                            return badRequest("Something went wrong !!! ")
-                    except:
-                        return badRequest("Card doesn't exixts !!!")
+                    return badRequest("Something went wrong !!! ")     
             else:
                 return badRequest("Admin not found !!!")
         else:
