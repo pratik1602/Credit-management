@@ -124,6 +124,23 @@ class UpdateDeleteTransactionRecord(APIView):
                 return badRequest("Admin not found !!!")
         else:
             return unauthorisedRequest()
+        
+    def delete(self, request):
+        token = get_object(request)
+        if token:
+            get_admin = User.objects.get(id = token['user_id'])
+            if get_admin and get_admin.is_admin:
+                transaction_id = request.GET.get("transaction_id") 
+                try:
+                    get_record = Transaction.objects.get(transaction_id = transaction_id)
+                    get_record.delete()
+                    return onSuccess("Record deleted successfully !!!", 1)
+                except:
+                    return badRequest("Record not found !!!")
+            else:
+                return badRequest("Admin not found !!!")
+        else:
+            return unauthorisedRequest()
 
 
 
