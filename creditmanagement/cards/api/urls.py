@@ -26,9 +26,5 @@ urlpatterns = [
     path ('edit-user-card', UserCard.as_view(), name="AddUserCard"),
 
 
-    #------------ ADD USERS PAYMENT RECORD (ADMIN ACCESS) --------------#
-    path ('add-payment-record', UserCardPayemtRecord.as_view(), name="UserCardPayemtRecord"),
-
-
 
 ]

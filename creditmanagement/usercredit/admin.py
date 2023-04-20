@@ -82,7 +82,7 @@ admin.site.register(Card, CardsAdmin)
 
 
 class TransactionAdmin(admin.ModelAdmin):
-    list_display = ['transaction_id', 'card']
+    list_display = ['transaction_id', 'card', 'paid_amount', 'due_paid_date']
 
     def save_model(self, request, obj, form, change):
 

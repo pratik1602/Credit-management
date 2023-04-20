@@ -129,8 +129,8 @@ class Transaction(models.Model):
     card = models.ForeignKey(Card, on_delete=models.SET_NULL, null=True, related_name="user_card_id")
     due_paid_through = models.CharField(max_length=100)
     paid_amount = models.FloatField(default=0)
-    due_paid_date = models.DateField(default= date.today)
-    due_paid_time = models.TimeField(auto_now_add=True)
+    due_paid_date = models.DateField(default= date.today, null = True, blank= True)
+    due_paid_time = models.TimeField(null =True, blank= True)
     # commission = models.FloatField(validators=percentage_validators, blank=True, null=True, default=2.0, editable=True)
     # profit_amount = models.FloatField(null=True,blank=True)
 

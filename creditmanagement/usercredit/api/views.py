@@ -113,7 +113,7 @@ class CreateUserAccount(APIView):
                                             if serializer.is_valid():
                                                 serializer.save()
                                                 get_user = User.objects.get(id = serializer.data["id"])
-                                                get_user.is_verified = True
+                                                # get_user.is_verified = True
                                                 get_user.otp_verified = True
                                                 get_user.save()
                                                 
@@ -131,7 +131,7 @@ class CreateUserAccount(APIView):
                                         if serializer.is_valid():
                                             serializer.save()
                                             get_user = User.objects.get(id = serializer.data["id"])
-                                            get_user.is_verified = True
+                                            # get_user.is_verified = True
                                             get_user.otp_verified = True
                                             get_user.save()
 

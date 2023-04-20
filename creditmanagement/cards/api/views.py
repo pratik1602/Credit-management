@@ -365,55 +365,7 @@ class UserCard(APIView):
             return unauthorisedRequest()
             
 
-#---------------------- PAYMENTS OF USER'S CARDS (ADMIN ACCESS) -----------------#
 
-class UserCardPayemtRecord(APIView):
-    def post(self, request):
-        token = get_object(request)
-        if token:
-            get_admin = User.objects.get(id = token["user_id"])
-            if get_admin and get_admin.is_admin:
-                data = request.data
-                if data["card"] != "" and data["card_number"] != "" and data["paid_amount"] != "" and data["due_paid_date"] != "" and data["due_paid_time"] != "" and data["due_paid_through"] != "": 
-                    try:
-                        card_obj = Card.objects.get(card_id = data["card"])
-                    except:
-                        return badRequest("Card doesn't exists !!!")
-
-                    card_number = Card.objects.filter(card_number = data["card_number"], card_id = data["card"])
-                    if card_number.exists():
-                        data["card"] = card_obj.card_id
-                        data["admin"] = get_admin.id
-                        serializer = UserCardPaymentSerializer(data=data)
-                        if serializer.is_valid():
-                            serializer.save()
-                            get_record = Transaction.objects.get(transaction_id = serializer.data["transaction_id"])
-                            get_record.user = card_obj.user_id
-                            get_record.save()
-                            return onSuccess("Payment record added successfully !!!", serializer.data)
-                        else:
-                            return badRequest("Something went wrong !!!")
-                    else:
-                        return badRequest("Card number is not exists or different card !!!")  
-                else:
-                    return badRequest("Fields is missing !!!")
-            else:
-                return  badRequest("Admin not found !!!")
-        else:
-            return unauthorisedRequest()
-        
-
-
-        
-    # def patch(self, request):
-    #     token = get_object(request)
-    #     if token:
-    #         get_admin = User.objects.get(id = token["user_id"])
-    #         if get_admin and get_admin.is_admin:
-
-
-    #     else:
-    #         return unauthorisedRequest()
             
 
 

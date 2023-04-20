@@ -52,13 +52,7 @@ class AdminAllcardSerializer(serializers.ModelSerializer):
         fields = ['user_id','card_id','card_number', 'card_bank_name', 'card_holder_name', 'card_type',  'card_category' , 'card_photo', 'card_exp_date', 'card_cvv', 'card_network', 'credit_amount', 'available_balance']
 
 
-#---------------------- ADD PAYMENT RECORD SERIALIZER --------------------#
 
-class UserCardPaymentSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Transaction
-        fields = ["transaction_id","admin","card", "due_paid_date","due_paid_time", "paid_amount", "due_paid_through"]
 
 
 
