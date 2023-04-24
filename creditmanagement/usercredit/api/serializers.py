@@ -128,18 +128,6 @@ class USerChangePasswordSerializer(serializers.Serializer):
     class Meta:
         fields = ['password','password2']
 
-    # def validate(self, attrs):
-    #     password = attrs.get('password')
-    #     password2 = attrs.get('password2')
-    #     user = self.context.get('user')
-    #     # if password != password2:
-    #     #     # return badRequest("password and confirm password dosen't match")
-    #     #     raise serializers.ValidationError("password and confirm password dosen't match")
-    #     user.set_password(password)
-    #     user.save()
-    #     return super().validate(attrs)
-
-
 #------------------ RESET PASSWORD EMAIL (ADMIN, USER) ---------------------#
 
 class ResetPasswordEmailSerializer(serializers.Serializer):
