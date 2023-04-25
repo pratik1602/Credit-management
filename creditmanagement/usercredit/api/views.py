@@ -27,28 +27,28 @@ def get_tokens_for_user(user):
     return str(refresh.access_token)
     
 
-#--------------- USER LIST (ADMIN ACCESS) ------------------#
+#--------------- USERS LIST (ADMIN ACCESS) ------------------#
 
 class GetUserList(APIView):
 
     def get(self, request):
         token = get_object(request)
         if token:
-            get_admin = User.objects.get(id = token["user_id"])
-            if get_admin and get_admin.is_admin:
-                user_id = request.GET.get("id")
-                if user_id != None or 0:
-                    try:
-                        user_obj = User.objects.filter(under_by = get_admin, id = user_id)
-                    except:
-                        return badRequest("No User found !!!")
-                else:
-                    user_obj = User.objects.filter(under_by = get_admin)
-
-                serializer = UserSerializer(user_obj, many=True)
-                return onSuccess("Users List !!!",  serializer.data)
-            else:
+            try:
+                get_admin = User.objects.get(id = token["user_id"], is_admin= True)
+            except:
                 return badRequest("No Admin found !!!")
+            user_id = request.GET.get("id")
+            if user_id != None or 0:
+                try:
+                    user_obj = User.objects.filter(under_by = get_admin, id = user_id)
+                except:
+                    return badRequest("No User found !!!")
+            else:
+                user_obj = User.objects.filter(under_by = get_admin)
+
+            serializer = UserSerializer(user_obj, many=True)
+            return onSuccess("Users List !!!",  serializer.data)         
         else:
             return unauthorisedRequest()
 
@@ -60,26 +60,26 @@ class VerifyUserAccount(APIView):
     def post(self, request):
         token = get_object(request)
         if token:
-            get_admin = User.objects.get(id = token["user_id"])
-            if get_admin and get_admin.is_admin:
-                data = request.data
-                if data["user_id"] != "" and data["is_verified"] != "":
-                    try:
-                        user = User.objects.get(id = data["user_id"])
-                        if data["is_verified"] == True:
-                            user.is_verified = True
-                            user.save()
-                            return onSuccess("Account verified successfully !!!", 1)
-                        else:
-                            user.is_verified = False
-                            user.save()
-                            return onSuccess("Account unverified successfully !!!", 1)                            
-                    except:
-                        return badRequest("User not found !!!")
-                else:
-                    return badRequest("Fields is missing !!!")
-            else:
+            try:
+                User.objects.get(id = token["user_id"], is_admin= True)
+            except:
                 return badRequest("Admin not found !!!")
+            data = request.data
+            if data["user_id"] != "" and data["is_verified"] != "":
+                try:
+                    user = User.objects.get(id = data["user_id"])
+                    if data["is_verified"] == True:
+                        user.is_verified = True
+                        user.save()
+                        return onSuccess("Account verified successfully !!!", 1)
+                    else:
+                        user.is_verified = False
+                        user.save()
+                        return onSuccess("Account unverified successfully !!!", 1)                            
+                except:
+                    return badRequest("User not found !!!")
+            else:
+                return badRequest("Fields is missing !!!")   
         else:
             return unauthorisedRequest()
 
@@ -92,37 +92,21 @@ class CreateUserAccount(APIView):
             request.POST._mutable = True
         token = get_object(request)
         if token:
-            get_admin = User.objects.get(id = token["user_id"])
-            if get_admin and get_admin.is_admin:
-                data = request.data 
-                if data["first_name"] != "" and data["last_name"] != "" and data["password"] != "" and data["password2"] != "" and data["phone_no"] != "" and data["aadhar"] != "" and data["pan"] != "" and data["cheque"] != "":
-                    if len(data['phone_no']) == 10 and re.match("[6-9][0-9]{9}", data['phone_no']):
-                        if data['email'] != '' and re.match("^[a-zA-Z0-9-_]+@[a-zA-Z0-9]+\.[a-z]{1,3}$", data["email"]):
-                            if data["password"] == data["password2"]:
-                                user = User.objects.filter(Q(phone_no = data["phone_no"]) | Q(email = data["email"]))
-                                if not user:
-                                    if data["refer_code"] != "":          
-                                        try:
-                                            referred_user = User.objects.get(refer_code = data["refer_code"])   
-                                            data["referred_by"] = referred_user.id                   
-                                            data["created_by"] = get_admin.id
-                                            data["modified_by"] = get_admin.id
-                                            data["under_by"] = get_admin.id
-                                            data["tc"] = True
-                                            serializer = UserRegistrationSerializer(data=data)
-                                            if serializer.is_valid():
-                                                serializer.save()
-                                                get_user = User.objects.get(id = serializer.data["id"])
-                                                # get_user.is_verified = True
-                                                get_user.otp_verified = True
-                                                get_user.save()
-                                                
-                                                return onSuccess("User created successfully !!!",serializer.data)
-                                            else:
-                                                return badRequest("Something Went Wrong !!!")
-                                        except:
-                                            return badRequest("Invalid referral code or doesn't match !!!")
-                                    else:
+            try:
+                get_admin = User.objects.get(id = token["user_id"], is_admin= True)
+            except:
+                return badRequest("Admin not found !!!")
+            data = request.data 
+            if data["first_name"] != "" and data["last_name"] != "" and data["password"] != "" and data["password2"] != "" and data["phone_no"] != "" and data["aadhar"] != "" and data["pan"] != "" and data["cheque"] != "":
+                if len(data['phone_no']) == 10 and re.match("[6-9][0-9]{9}", data['phone_no']):
+                    if data['email'] != '' and re.match("^[a-zA-Z0-9-_]+@[a-zA-Z0-9]+\.[a-z]{1,3}$", data["email"]):
+                        if data["password"] == data["password2"]:
+                            user = User.objects.filter(Q(phone_no = data["phone_no"]) | Q(email = data["email"]))
+                            if not user:
+                                if data["refer_code"] != "":          
+                                    try:
+                                        referred_user = User.objects.get(refer_code = data["refer_code"])   
+                                        data["referred_by"] = referred_user.id                   
                                         data["created_by"] = get_admin.id
                                         data["modified_by"] = get_admin.id
                                         data["under_by"] = get_admin.id
@@ -134,22 +118,38 @@ class CreateUserAccount(APIView):
                                             # get_user.is_verified = True
                                             get_user.otp_verified = True
                                             get_user.save()
-
-                                            return onSuccess("User created successfully !!!", serializer.data)
+                                            
+                                            return onSuccess("User created successfully !!!",serializer.data)
                                         else:
                                             return badRequest("Something Went Wrong !!!")
+                                    except:
+                                        return badRequest("Invalid referral code or doesn't match !!!")
                                 else:
-                                    return badRequest("User already exists !!!")
+                                    data["created_by"] = get_admin.id
+                                    data["modified_by"] = get_admin.id
+                                    data["under_by"] = get_admin.id
+                                    data["tc"] = True
+                                    serializer = UserRegistrationSerializer(data=data)
+                                    if serializer.is_valid():
+                                        serializer.save()
+                                        get_user = User.objects.get(id = serializer.data["id"])
+                                        # get_user.is_verified = True
+                                        get_user.otp_verified = True
+                                        get_user.save()
+
+                                        return onSuccess("User created successfully !!!", serializer.data)
+                                    else:
+                                        return badRequest("Something Went Wrong !!!")
                             else:
-                                return badRequest("Password and Confirm password doesn't matched !!!")
+                                return badRequest("User already exists !!!")
                         else:
-                            return badRequest("Invalid email id, Please try again. !!!")
+                            return badRequest("Password and Confirm password doesn't matched !!!")
                     else:
-                        return badRequest("Invalid mobile number, Please try again. !!!")
+                        return badRequest("Invalid email id, Please try again. !!!")
                 else:
-                    return badRequest("Fields is missing !!!")
+                    return badRequest("Invalid mobile number, Please try again. !!!")
             else:
-                return badRequest("Admin not found !!!")
+                return badRequest("Fields is missing !!!")   
         else:
             return unauthorisedRequest()
         
@@ -163,23 +163,23 @@ class EditUserProfile(APIView):
             request.POST._mutable = True
         token = get_object(request)
         if token:
-            get_admin = User.objects.get(id = token["user_id"])
-            if get_admin and get_admin.is_admin:   
-                data = request.data
-                user = User.objects.get(id = data["user_id"]) 
-                if user:
-                    data["modified_by"] = get_admin.id
-                    data["user_modified_at"] = datetime.now()
-                    serializer = editUserProfileSerializer(user, data=data, partial = True)
-                    if serializer.is_valid():
-                        serializer.save()
-                        return onSuccess("Account updated successfully !!!", serializer.data)
-                    else:
-                        return badRequest("Something Went Wrong !!!")
+            try:
+                get_admin = User.objects.get(id = token["user_id"], is_admin= True)
+            except:
+                return badRequest("Admin not found !!!")  
+            data = request.data
+            user = User.objects.get(id = data["user_id"]) 
+            if user:
+                data["modified_by"] = get_admin.id
+                data["user_modified_at"] = datetime.now()
+                serializer = editUserProfileSerializer(user, data=data, partial = True)
+                if serializer.is_valid():
+                    serializer.save()
+                    return onSuccess("Account updated successfully !!!", serializer.data)
                 else:
-                    return badRequest("User not found !!!")
+                    return badRequest("Something Went Wrong !!!")
             else:
-                return badRequest("Admin not found !!!")
+                return badRequest("User not found !!!")
         else:
             return unauthorisedRequest()     
 
@@ -191,17 +191,17 @@ class DeleteUserView(APIView):
     def delete(self, request, format=None):
         token = get_object(request)
         if token:
-            get_admin = User.objects.get(id = token["user_id"])
-            if get_admin and get_admin.is_admin:
-                try:
-                    user_id = request.GET.get("user_id")    
-                    user = User.objects.get(id=user_id, under_by = get_admin.id)
-                    user.delete()
-                    return onSuccess("User Deleted Successfully !!!", 1)
-                except:
-                    return badRequest("User not found !!!")
-            else:
+            try:
+                get_admin = User.objects.get(id = token["user_id"], is_admin= True)
+            except:
                 return badRequest("Admin not found !!!")
+            try:
+                user_id = request.GET.get("user_id")    
+                user = User.objects.get(id=user_id, under_by = get_admin.id)
+                user.delete()
+                return onSuccess("User Deleted Successfully !!!", 1)
+            except:
+                return badRequest("User not found !!!")  
         else:
             return unauthorisedRequest()
 
@@ -286,12 +286,11 @@ class AdminProfileView(APIView):
         token = get_object(request)
         if token:
             try:
-                get_admin = User.objects.get(id = token["user_id"])
-                if get_admin and get_admin.is_admin:
-                    serializer = AdminProfileSerializer(get_admin)
-                    return onSuccess("Your profile !!!", serializer.data)
+                get_admin = User.objects.get(id = token["user_id"], is_admin= True)
             except:
-                return badRequest("User profile not found !!!")
+                return badRequest("Admin not found !!!")
+            serializer = AdminProfileSerializer(get_admin)
+            return onSuccess("Your profile !!!", serializer.data)
         else:
             return unauthorisedRequest()
 
@@ -300,19 +299,19 @@ class AdminProfileView(APIView):
             request.POST._mutable = True
         token= get_object(request)
         if token:
-            get_admin = User.objects.get(id = token["user_id"])
-            if get_admin and get_admin.is_admin:
-                data = request.data
-                serializer = AdminProfileSerializer(get_admin, data=data, partial = True)
-
-                if not serializer.is_valid():
-                    return badRequest(serializer.errors)
-                    # return badRequest("Something went wrong !!!")
+            try:
+                get_admin = User.objects.get(id = token["user_id"], is_admin= True)
+            except:
+                return badRequest("Admin not found !!!") 
+            data = request.data
+            serializer = AdminProfileSerializer(get_admin, data=data, partial = True)
+            if serializer.is_valid():
                 get_admin.user_modified_at = datetime.now()
                 serializer.save()
                 return onSuccess("Your data is updated !!!", serializer.data)
             else:
-                return badRequest("User profile not found !!!") 
+                return badRequest("Something went wrong !!!")
+                # return badRequest(serializer.errors)
         else:
             return unauthorisedRequest()
         
@@ -320,7 +319,7 @@ class AdminProfileView(APIView):
         token = get_object(request)
         if token:
             try:
-                get_admin = User.objects.get(id= token["user_id"])
+                get_admin = User.objects.get(id = token["user_id"], is_admin= True)
                 get_admin.delete()
                 return onSuccess("Account deleted successfully !!!", 1)
             except :
@@ -338,12 +337,11 @@ class RegisterUser(APIView):
     def post(self, request):
         if not request.POST._mutable:
             request.POST._mutable = True
-        data = request.data
         try:
-            admin = User.objects.get(id= data["id"])
+            get_admin = User.objects.get(id= data["id"], is_admin = True)
         except:
             return badRequest("Admin not found !!!")
-        
+        data = request.data
         if data["first_name"] != "" and data["last_name"] != "" and data["password"] != "" and data["password2"] != "" and data["phone_no"] != "" and data["aadhar"] != "" and data["pan"] != "" and data["cheque"] != "" and data["tc"] != "":
             if len(data['phone_no']) == 10 and re.match("[6-9][0-9]{9}", data['phone_no']):
                 if data['email'] != '' and re.match("^[a-zA-Z0-9-_.]+@[a-zA-Z0-9]+\.[a-z]{1,3}$", data["email"]):
@@ -355,9 +353,9 @@ class RegisterUser(APIView):
                                     try:
                                         referred_user = User.objects.get(refer_code = data["refer_code"])   
                                         data["referred_by"] = referred_user.id                   
-                                        data["created_by"] = admin.id
-                                        data["modified_by"] = admin.id
-                                        data["under_by"] = admin.id
+                                        data["created_by"] = get_admin.id
+                                        data["modified_by"] = get_admin.id
+                                        data["under_by"] = get_admin.id
                                         serializer = UserRegistrationSerializer(data=data)
                                         if serializer.is_valid():
                                             serializer.save()
@@ -369,9 +367,9 @@ class RegisterUser(APIView):
                                     except:
                                         return badRequest("Invalid referral code or doesn't match !!!")
                                 else:
-                                    data["created_by"] = admin.id
-                                    data["modified_by"] = admin.id
-                                    data["under_by"] = admin.id
+                                    data["created_by"] = get_admin.id
+                                    data["modified_by"] = get_admin.id
+                                    data["under_by"] = get_admin.id
                                     serializer = UserRegistrationSerializer(data=data)
                                     if serializer.is_valid():
                                         serializer.save()
@@ -435,12 +433,11 @@ class UserProfileView(APIView):
         token = get_object(request)
         if token:
             try:
-                get_user = User.objects.get(id = token["user_id"])
-                if get_user and get_user.otp_verified:
-                    serializer = UserProfileSerializer(get_user)
-                    return onSuccess("User Profile !!!", serializer.data)
+                get_user = User.objects.get(id = token["user_id"], otp_verified = True)
             except:
-                return badRequest("User profile not found !!!")
+                return badRequest("User not found or not otp verified !!!")
+            serializer = UserProfileSerializer(get_user)
+            return onSuccess("User Profile !!!", serializer.data)
         else:
             return unauthorisedRequest()
     
@@ -449,18 +446,20 @@ class UserProfileView(APIView):
             request.POST._mutable = True
         token= get_object(request)
         if token:
-            get_user = User.objects.get(id = token["user_id"])
-            if get_user:
-                data = request.data
-                serializer = UserProfileSerializer(get_user, data=data, partial = True)
-                if not serializer.is_valid():
-                    return badRequest("Something went wrong !!!")
+            try:
+                get_user = User.objects.get(id = token["user_id"], otp_verified = True)
+            except:
+                return badRequest("User not found !!!") 
+            data = request.data
+            serializer = UserProfileSerializer(get_user, data=data, partial = True)
+            if serializer.is_valid():
                 get_user.user_modified_at = datetime.now()
                 get_user.modified_by = get_user
                 serializer.save()
                 return onSuccess("Your data is updated !!!", serializer.data)
             else:
-                return badRequest("User not found !!!") 
+                return badRequest("Something went wrong !!!")
+                # return badRequest(serializer.errors)
         else:
            return unauthorisedRequest()
 
@@ -468,7 +467,7 @@ class UserProfileView(APIView):
         token = get_object(request)
         if token:
             try:
-                get_user = User.objects.get(id= token["user_id"])
+                get_user = User.objects.get(id = token["user_id"], otp_verified = True)
                 get_user.delete()
                 return onSuccess("Account deleted successfully !!!", 1)
             except:
@@ -499,7 +498,8 @@ class LoginAPIView(APIView):
                     send_otp_via_email(serializer.data['email']) 
                     return badRequest("You are not a verified user!!! Please check your email and get verified.")
             else:      
-                return Response({"Status":False, "Data":serializer.errors})
+                return badRequest("Something went wrong !!!")
+                # return Response({"Status":False, "Data":serializer.errors})
         else:
             return badRequest("Fields is missing !!!")
 
