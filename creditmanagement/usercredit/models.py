@@ -91,6 +91,7 @@ class Card(models.Model):
     # CARD_CHOICE = (("business", "BUSINESS"),
     #             ("personal", "PERSONAL"),)
     card_bank_name = models.CharField(max_length=100)
+    payment_method = models.CharField(max_length=25)
     card_type = models.CharField(max_length=20)
     card_category = models.CharField(max_length=20, blank = True)
     card_network = models.CharField(max_length=50)
@@ -128,9 +129,12 @@ class Transaction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE,null=True, related_name="user_id")
     card = models.ForeignKey(Card, on_delete=models.SET_NULL, null=True, related_name="user_card_id")
     due_paid_through = models.CharField(max_length=100)
-    paid_amount = models.FloatField(default=0)
-    due_paid_date = models.DateField(default= date.today, null = True, blank= True)
-    due_paid_time = models.TimeField(null =True, blank= True)
+    paid_amount = models.FloatField(default=0, blank=True, null=True)
+    due_paid_at = models.DateTimeField(default= datetime.now)
+    payment_type = models.CharField(max_length=30)
+    charges = models.FloatField(default=0, blank=True, null=True)
+    # due_paid_date = models.DateField(default= date.today, null = True, blank= True)
+    # due_paid_time = models.TimeField(null =True, blank= True)
     # commission = models.FloatField(validators=percentage_validators, blank=True, null=True, default=2.0, editable=True)
     # profit_amount = models.FloatField(null=True,blank=True)
 

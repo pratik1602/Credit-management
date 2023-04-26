@@ -274,7 +274,7 @@ class UserCard(APIView):
             except:
                 return badRequest("Admin not found !!!")
             data = request.data
-            if data["card_bank_name"] != "" and data["card_category"] != "" and data["card_number"] != "" and data["card_network"] != "" and data["card_holder_name"] != "" and data["card_photo"] != "" and data["card_exp_date"] != "" and  data["card_cvv"] != "" and data["due_date"] != "" and data["due_amount"] != "" and data["commission"] != "":
+            if data["payment_method"] != "" and data["card_bank_name"] != "" and data["card_category"] != "" and data["card_number"] != "" and data["card_network"] != "" and data["card_holder_name"] != "" and  data["card_exp_date"] != "" and  data["card_cvv"] != "" and data["due_date"] != "" and data["due_amount"] != "" and data["commission"] != "":
                 try:
                     get_user = User.objects.get(id = data["user_id"], under_by = get_admin.id, is_verified = True)
                 except:

@@ -13,7 +13,7 @@ class UserCardPaymentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ["transaction_id","admin","card", "due_paid_date","due_paid_time", "paid_amount", "due_paid_through"]
+        fields = ["transaction_id","admin","card", "payment_type", "paid_amount", "due_paid_through", "charges"]
 
 
 class CardDetailsSerializer(serializers.ModelSerializer):

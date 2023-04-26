@@ -78,7 +78,7 @@ class UserCardPayemtRecord(APIView):
             get_admin = User.objects.get(id = token["user_id"])
             if get_admin and get_admin.is_admin:
                 data = request.data
-                if data["card"] != "" and data["paid_amount"] != "" and data["due_paid_date"] != "" and data["due_paid_time"] != "" and data["due_paid_through"] != "": 
+                if data["card"] != "" and data["paid_amount"] != "" and data["payment_type"] != "" and data["due_paid_through"] != "" and data["charges"] != "": 
                     try:
                         card_obj = Card.objects.get(card_id = data["card"], user_id__under_by = get_admin)
                     except:

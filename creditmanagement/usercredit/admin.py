@@ -10,6 +10,7 @@ from django.contrib.auth.models import Group
 User  = get_user_model()
 admin.site.unregister(Group)
 
+#----------------------- USER MODEL AMDIN ---------------------------#
 
 class UserAdmin(BaseUserAdmin):
     # The forms to add and change user instances
@@ -18,7 +19,7 @@ class UserAdmin(BaseUserAdmin):
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
     list_display = ['id','email','otp_verified', 'is_verified', 'is_admin','under_by'] #'aadhar_status','pan_status','cheque_status', 'commission_status', 
-    list_filter = ['role',]
+    list_filter = ['role', 'under_by']
     list_editable = ['otp_verified','is_verified'] #'aadhar_status','pan_status','cheque_status',
     list_per_page = 10
     fieldsets = (
@@ -54,10 +55,11 @@ class UserAdmin(BaseUserAdmin):
 
 admin.site.register(User, UserAdmin)
 
-########## CARDS ADMIN #########
+
+#-------------------------- CARD MODEL ADMIN ---------------------------#
 
 class CardsAdmin(admin.ModelAdmin):
-    list_display = ['card_id', 'card_holder_name','card_type','due_date', 'due_amount', 'commission','profit_amount', 'paid_by','card_status']
+    list_display = ['card_id', 'card_holder_name','payment_method','due_date', 'due_amount', 'commission','profit_amount', 'paid_by','card_status']
     list_filter = ('card_status', 'card_type' )
     search_fields = ('card_holder_name','card_id',)
     list_editable = ['commission', 'card_status']
@@ -81,9 +83,12 @@ class CardsAdmin(admin.ModelAdmin):
 admin.site.register(Card, CardsAdmin)
 
 
+#-------------------- TRANSACTION MODEL ADMIN -----------------------#
+
 class TransactionAdmin(admin.ModelAdmin):
-    list_display = ['transaction_id', 'card', 'paid_amount', 'due_paid_date']
+    list_display = ['transaction_id', 'card', 'paid_amount', 'due_paid_at']
     list_filter = ['admin']
+    list_per_page = 10
 
     def save_model(self, request, obj, form, change):
 
