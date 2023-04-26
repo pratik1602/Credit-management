@@ -37,7 +37,7 @@ class AllCardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Card
         # fields = "__all__"
-        fields = ['card_id',"user_id",'card_bank_name','card_type', 'card_category', 'card_number','card_network','card_holder_name' ,'card_photo','card_exp_date' ,'card_cvv','due_date','due_amount', 'commission', 'profit_amount', 'card_status']
+        fields = ['card_id',"user_id",'card_bank_name', "payment_method",'card_type', 'card_category', 'card_number','card_network','card_holder_name' ,'card_photo','card_exp_date' ,'card_cvv','due_date','due_amount', 'commission', 'profit_amount', 'card_status']
 
 #------------------------- ADMIN CARDS SERIALIZER ---------------------#
 
