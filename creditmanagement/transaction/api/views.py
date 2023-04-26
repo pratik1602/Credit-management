@@ -56,7 +56,6 @@ class PaymentRecords(APIView):
                     
                 else:
                     all_records_objs = Transaction.objects.filter(admin = get_admin)
-                    print("all record", all_records_objs)
                     if all_records_objs:
                         serializer = AllTransactionRecordSerializer(all_records_objs, many=True)
                         return onSuccess("Records List !!!",  serializer.data)
@@ -78,7 +77,7 @@ class UserCardPayemtRecord(APIView):
             get_admin = User.objects.get(id = token["user_id"])
             if get_admin and get_admin.is_admin:
                 data = request.data
-                if data["card"] != "" and data["paid_amount"] != "" and data["payment_type"] != "" and data["due_paid_through"] != "" and data["charges"] != "": 
+                if data["card"] != "" and data["paid_amount"] != "" and data["due_paid_through"] != "" and data["charges"] != "": 
                     try:
                         card_obj = Card.objects.get(card_id = data["card"], user_id__under_by = get_admin)
                     except:

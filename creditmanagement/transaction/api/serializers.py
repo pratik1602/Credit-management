@@ -10,10 +10,11 @@ from usercredit.models import *
 #---------------------- ADD PAYMENT RECORD SERIALIZER --------------------#
 
 class UserCardPaymentSerializer(serializers.ModelSerializer):
+    payment_type = serializers.CharField(required = False)
 
     class Meta:
         model = Transaction
-        fields = ["transaction_id","admin","card", "payment_type", "paid_amount", "due_paid_through", "charges"]
+        fields = ["transaction_id","admin","card", "paid_amount", "payment_type", "due_paid_through", "charges"]
 
 
 class CardDetailsSerializer(serializers.ModelSerializer):
