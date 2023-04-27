@@ -63,10 +63,9 @@ class AddPaymentRequestByAdmin(APIView):
             if data["payment_method"] != "" and data["due_amount"] != "" and data["due_date"] != "":
                 try:
                     get_card = Card.objects.get(card_id = data["card_id"], user_id__under_by = get_admin)
-                    print("get card", get_card)
                 except:
                     return badRequest("Card not found !!!")
-                
+                data["due_amount"] = "%.2f" % float(data["due_amount"])
                 data["user"] = get_card.user_id.id 
                 data["card"] = get_card.card_id
                 data["admin"] = get_admin.id
@@ -103,7 +102,7 @@ class AddPaymentRequestByUser(APIView):
                     print("get card", get_card)
                 except:
                     return badRequest("Card not found !!!")
-                
+                data["due_amount"] = "%.2f" % float(data["due_amount"])
                 data["user"] = get_card.user_id.id 
                 data["card"] = get_card.card_id
                 data["admin"] = get_card.user_id.under_by.id
