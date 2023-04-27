@@ -10,6 +10,8 @@ from django.db.models import Q
 
 #------- YOUR VIEWS ----------#
 
+#------------------------ GET ALL PAYMEMT REQUEST (ADMIN ACCESS) ------------------#
+
 class GetPaymentRequest(APIView):
     def get(self, request):
         token =  get_object(request)
@@ -31,21 +33,18 @@ class GetPaymentRequest(APIView):
                 payment_request_objs = Payment_Request.objects.filter(card__card_id = card_id)
                 if payment_request_objs:
                     serializer = GetPaymentRequestSerializer(payment_request_objs, many = True)
-                    return onSuccess("Records with Card number !!!", serializer.data)
+                    return onSuccess("Payment Request Objects with Card !!!", serializer.data)
                 else:
                     serializer = GetPaymentRequestSerializer(payment_request_objs, many = True)
-                    return onSuccess("No Records found with given Card number !!!", serializer.data)
-            # else:
-            #     all_payment_request_objs = Payment_Request.objects.filter(card)
-            #     if all_records_objs:
-            #         serializer = AllTransactionRecordSerializer(all_records_objs, many=True)
-            #         return onSuccess("Records List !!!",  serializer.data)
-            #     else:
-            #         serializer = AllTransactionRecordSerializer(all_records_objs, many=True)
-            #         return onSuccess("Records List !!!",  serializer.data)
-            
-
-
+                    return onSuccess("Payment Request Objects with Card !!!", serializer.data)
+            else:
+                all_payment_request_objs = Payment_Request.objects.filter(admin = get_admin)
+                if all_payment_request_objs:
+                    serializer = GetPaymentRequestSerializer(all_payment_request_objs, many=True)
+                    return onSuccess("All Payment Request Objects !!!",  serializer.data)
+                else:
+                    serializer = GetPaymentRequestSerializer(all_payment_request_objs, many=True)
+                    return onSuccess("All Payment Request Objects !!!",  serializer.data)
         else:
             return unauthorisedRequest()
 

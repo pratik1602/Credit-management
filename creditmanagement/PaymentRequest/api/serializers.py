@@ -16,11 +16,11 @@ class CardDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Card
-        fields = ['card_id','card_bank_name', 'card_category' ,'card_number','card_network','card_holder_name' ,'card_photo','card_exp_date' ,'card_cvv','commission','due_date','due_amount']
+        fields = ['card_id','card_bank_name', 'card_category' ,'card_number','card_network','card_holder_name' ,'card_photo','card_exp_date' ,'card_cvv','commission']
 
 class GetPaymentRequestSerializer(serializers.ModelSerializer):
     card = CardDetailSerializer()
 
     class Meta:
         model = Payment_Request
-        fields = ['request_id', 'card','due_amount', 'due_date']
+        fields = ['request_id', 'card','due_amount', 'due_date', 'payment_method', 'payment_status']

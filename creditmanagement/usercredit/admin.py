@@ -59,10 +59,10 @@ admin.site.register(User, UserAdmin)
 #-------------------------- CARD MODEL ADMIN ---------------------------#
 
 class CardsAdmin(admin.ModelAdmin):
-    list_display = ['card_id', 'card_holder_name','due_date', 'due_amount', 'commission','profit_amount', 'paid_by']
-    list_filter = ('card_type', )
+    list_display = ['card_id', 'card_holder_name', 'card_bank_name', 'card_category', ]
+    list_filter = ('card_category', )
     search_fields = ('card_holder_name','card_id',)
-    list_editable = ['commission',]
+    list_editable = []
     readonly_fields = ('created_at','modified_at',)
     ordering = ('card_id',)
     list_per_page = 10

@@ -325,11 +325,11 @@ class UserCard(APIView):
                 serializer = CreateUpdateUserCardSerializer(get_card, data=data, partial= True)
                 if serializer.is_valid():
                     serializer.save()
-                    # get_card = Card.objects.get(card_id = serializer.data["card_id"])
+                    get_card = Card.objects.get(card_id = serializer.data["card_id"])
                     # get_card.profit_amount = get_card.due_amount * get_card.commission / 100
                     # get_card.profit_amount = "%.2f" % float(get_card.profit_amount)
-                    # get_card.updated_by = get_admin
-                    # get_card.save()
+                    get_card.updated_by = get_admin
+                    get_card.save()
                     return onSuccess("Card Updated Successfully !!!", serializer.data)
                 else:
                     return badRequest("Something went wrong !!!")
