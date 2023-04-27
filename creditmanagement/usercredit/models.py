@@ -91,7 +91,7 @@ class Card(models.Model):
     # CARD_CHOICE = (("business", "BUSINESS"),
     #             ("personal", "PERSONAL"),)
     card_bank_name = models.CharField(max_length=100)
-    payment_method = models.CharField(max_length=25)
+    # payment_method = models.CharField(max_length=25)
     card_type = models.CharField(max_length=20)
     card_category = models.CharField(max_length=20, blank = True)
     card_network = models.CharField(max_length=50)
@@ -100,13 +100,13 @@ class Card(models.Model):
     card_photo = models.ImageField(upload_to= "Images\Card", default="")
     card_exp_date = models.DateField() #validators=[is_expired]
     card_cvv = models.IntegerField() #validators=[validate_cvv]
-    due_date = models.DateField(null=True) #validators=[has_expired]
+    due_date = models.DateField(null=True, blank=True) #validators=[has_expired]
     commission = models.FloatField(validators=percentage_validators, blank=True, null=True, default=2.0, editable=True)
-    due_amount = models.FloatField(default=0)
+    due_amount = models.FloatField(default=0, null=True, blank=True)
     # due_paid_at = models.DateTimeField(default= datetime.now)
     # paid_amount = models.FloatField(default=0)
     # due_paid_through = models.CharField(max_length=100)
-    card_status = models.BooleanField(default=False)
+    # card_status = models.BooleanField(default=False)
     updated_by=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='updated_by_user', on_delete=models.SET_NULL,  null=True, blank=True)
     created_by=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='created_by_user',on_delete=models.SET_NULL,  null=True, blank=True)
     paid_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='paid_by_user', on_delete=models.SET_NULL, null=True, blank=True) 
@@ -133,6 +133,7 @@ class Transaction(models.Model):
     due_paid_at = models.DateTimeField(default= datetime.now)
     payment_type = models.CharField(max_length=30)
     charges = models.FloatField(default=0, blank=True, null=True)
+    commission = models.FloatField(validators=percentage_validators, blank=True, null=True, default=2.0, editable=True)
     # due_paid_date = models.DateField(default= date.today, null = True, blank= True)
     # due_paid_time = models.TimeField(null =True, blank= True)
     # commission = models.FloatField(validators=percentage_validators, blank=True, null=True, default=2.0, editable=True)
@@ -140,3 +141,23 @@ class Transaction(models.Model):
 
     def __str__(self) :
         return self.due_paid_through
+
+
+#---------------------------------- PAYMENT REQUEST MODEL ---------------------------#
+
+class Payment_Request(models.Model):
+
+    request_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    admin = models.ForeignKey(User, on_delete=models.CASCADE,null=True, related_name="payment_admin_id")
+    user = models.ForeignKey(User, on_delete=models.CASCADE,null=True, related_name="payment_user_id")
+    card = models.ForeignKey(Card, on_delete=models.SET_NULL, null=True, related_name="requested_card_id")
+    payment_method = models.CharField(max_length=25)
+    due_amount = models.FloatField(default=0, null=True, blank=True)
+    due_date = models.DateField(null=True, blank=True) #validators=[has_expired]
+    requested_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='requested_by_user',on_delete=models.SET_NULL,  null=True, blank=True)
+    payment_status = models.BooleanField(default=False)
+    requested_at = models.DateTimeField(default= datetime.now)
+    modified_at = models.DateTimeField(default=datetime.now)
+
+    def __str__(self) :
+            return self.payment_method

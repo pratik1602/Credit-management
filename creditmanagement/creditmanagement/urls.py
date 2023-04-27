@@ -24,6 +24,7 @@ urlpatterns = [
     path ('api/user/', include('usercredit.api.urls')),
     path ('api/cards/', include('cards.api.urls')),
     path ('api/transaction/', include('transaction.api.urls')),
+    path ('api/paymentRequest/', include('PaymentRequest.api.urls')),
 
 ]
 

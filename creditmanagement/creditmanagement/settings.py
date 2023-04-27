@@ -75,6 +75,7 @@ INSTALLED_APPS = [
     'usercredit.apps.UsercreditConfig',
     'cards.apps.CardsConfig',
     'transaction.apps.TransactionConfig',
+    'PaymentRequest.apps.PaymentrequestConfig'
 ]
 
 MIDDLEWARE = [

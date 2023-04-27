@@ -59,10 +59,10 @@ admin.site.register(User, UserAdmin)
 #-------------------------- CARD MODEL ADMIN ---------------------------#
 
 class CardsAdmin(admin.ModelAdmin):
-    list_display = ['card_id', 'card_holder_name','payment_method','due_date', 'due_amount', 'commission','profit_amount', 'paid_by','card_status']
-    list_filter = ('card_status', 'card_type' )
+    list_display = ['card_id', 'card_holder_name','due_date', 'due_amount', 'commission','profit_amount', 'paid_by']
+    list_filter = ('card_type', )
     search_fields = ('card_holder_name','card_id',)
-    list_editable = ['commission', 'card_status']
+    list_editable = ['commission',]
     readonly_fields = ('created_at','modified_at',)
     ordering = ('card_id',)
     list_per_page = 10
@@ -101,3 +101,23 @@ class TransactionAdmin(admin.ModelAdmin):
         return super(TransactionAdmin, self).save_model(request, obj, form, change)
 
 admin.site.register(Transaction, TransactionAdmin)
+
+
+#-------------------- PAYMENT REQUEST MODEL ADMIN -----------------------#
+
+class PaymentRequestAdmin(admin.ModelAdmin):
+    list_display = ['request_id', 'user', 'card', 'payment_method', 'due_amount', 'due_date', 'requested_by']
+    list_filter = ['card']
+    list_per_page = 10
+
+    # def save_model(self, request, obj, form, change):
+
+        # if change:
+        #     obj.profit_amount = obj.amount_paid * obj.commission/100
+        #     obj.paid_at = datetime.now()
+        # else:                    
+        #     obj.profit_amount = obj.amount_paid * obj.commission/100
+        # obj.save()            
+        # return super(TransactionAdmin, self).save_model(request, obj, form, change)
+
+admin.site.register(Payment_Request, PaymentRequestAdmin)
