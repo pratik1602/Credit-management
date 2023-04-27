@@ -19,51 +19,60 @@ class PaymentRecords(APIView):
     def get(self, request):
         token = get_object(request)
         if token:
-            get_admin = User.objects.get(id = token["user_id"])
-            if get_admin and get_admin.is_admin:
-                transaction_id = request.GET.get("transaction_id")
-                user_id = request.GET.get("user_id")
-                card_id = request.GET.get("card_id")
-                if transaction_id != None or 0:
-                    try:
-                        record_obj = Transaction.objects.get(transaction_id = transaction_id)
-                        serializer = AllTransactionRecordSerializer(record_obj)
-                        return onSuccess("Transaction Record !!!", serializer.data)
-                    except:
-                        return badRequest("No records found !!!")
-                    
-                elif user_id != None or 0:
-                    try:
-                        get_user = User.objects.get(id = user_id)
-                    except:
-                        return badRequest("User not found !!!")
-                    record_objs = Transaction.objects.filter(user = get_user)
-                    if record_objs.exists():
-                        serializer = AllTransactionRecordSerializer(record_objs, many = True)
-                        return onSuccess("User's all transactions !!!", serializer.data)
-                    else:
-                        serializer = AllTransactionRecordSerializer(record_objs, many = True)
-                        return onSuccess("No Transactions found for user !!!", serializer.data)
-                    
-                elif card_id != None or 0:
-                    record_objs = Transaction.objects.filter(card__card_id = card_id)
-                    if record_objs:
-                        serializer = AllTransactionRecordSerializer(record_objs, many = True)
-                        return onSuccess("Records with Card number !!!", serializer.data)
-                    else:
-                        serializer = AllTransactionRecordSerializer(record_objs, many = True)
-                        return onSuccess("No Records found with given Card number !!!", serializer.data)
-                    
-                else:
-                    all_records_objs = Transaction.objects.filter(admin = get_admin)
-                    if all_records_objs:
-                        serializer = AllTransactionRecordSerializer(all_records_objs, many=True)
-                        return onSuccess("Records List !!!",  serializer.data)
-                    else:
-                        serializer = AllTransactionRecordSerializer(all_records_objs, many=True)
-                        return onSuccess("Records List !!!",  serializer.data)
-            else:
+            try:
+                get_admin = User.objects.get(id = token["user_id"], is_admin = True)
+            except:
                 return badRequest("Admin not found !!!")
+            transaction_id = request.GET.get("transaction_id")
+            user_id = request.GET.get("user_id")
+            card_id = request.GET.get("card_id")
+            request_id = request.GET.get("request_id")
+            if transaction_id != None or 0:
+                try:
+                    record_obj = Transaction.objects.get(transaction_id = transaction_id)
+                    serializer = AllTransactionRecordSerializer(record_obj)
+                    return onSuccess("Transaction Record !!!", serializer.data)
+                except:
+                    return badRequest("No records found !!!")
+                
+            elif user_id != None or 0:
+                try:
+                    get_user = User.objects.get(id = user_id)
+                except:
+                    return badRequest("User not found !!!")
+                record_objs = Transaction.objects.filter(user = get_user)
+                if record_objs.exists():
+                    serializer = AllTransactionRecordSerializer(record_objs, many = True)
+                    return onSuccess("User's all transactions !!!", serializer.data)
+                else:
+                    serializer = AllTransactionRecordSerializer(record_objs, many = True)
+                    return onSuccess("No Transactions found for user !!!", serializer.data)
+                
+            elif card_id != None or 0:
+                record_objs = Transaction.objects.filter(card__card_id = card_id)
+                if record_objs:
+                    serializer = AllTransactionRecordSerializer(record_objs, many = True)
+                    return onSuccess("Records with Card number !!!", serializer.data)
+                else:
+                    serializer = AllTransactionRecordSerializer(record_objs, many = True)
+                    return onSuccess("No Records found with given Card number !!!", serializer.data)
+            
+            elif request_id != None or 0:
+                record_objs = Transaction.objects.filter(payment_request__request_id = request_id)
+                if record_objs:
+                    serializer = AllTransactionRecordSerializer(record_objs, many = True)
+                    return onSuccess("Records with request id !!!", serializer.data)
+                else:
+                    serializer = AllTransactionRecordSerializer(record_objs, many = True)
+                    return onSuccess("No Records found with given request id !!!", serializer.data)
+            else:
+                all_records_objs = Transaction.objects.filter(admin = get_admin)
+                if all_records_objs:
+                    serializer = AllTransactionRecordSerializer(all_records_objs, many=True)
+                    return onSuccess("Records List !!!",  serializer.data)
+                else:
+                    serializer = AllTransactionRecordSerializer(all_records_objs, many=True)
+                    return onSuccess("Records List !!!",  serializer.data)
         else:
             return unauthorisedRequest()
 
@@ -74,29 +83,35 @@ class UserCardPayemtRecord(APIView):
     def post(self, request):
         token = get_object(request)
         if token:
-            get_admin = User.objects.get(id = token["user_id"])
-            if get_admin and get_admin.is_admin:
-                data = request.data
-                if data["card"] != "" and data["paid_amount"] != "" and data["due_paid_through"] != "" and data["charges"] != "": 
-                    try:
-                        card_obj = Card.objects.get(card_id = data["card"], user_id__under_by = get_admin)
-                    except:
-                        return badRequest("Card doesn't exists !!!")
-                    data["card"] = card_obj.card_id
-                    data["admin"] = get_admin.id
-                    serializer = UserCardPaymentSerializer(data=data)
-                    if serializer.is_valid():
-                        serializer.save()
-                        get_record = Transaction.objects.get(transaction_id = serializer.data["transaction_id"])
-                        get_record.user = card_obj.user_id
-                        get_record.save()
-                        return onSuccess("Payment record added successfully !!!", serializer.data)
-                    else:
-                        return badRequest("Something went wrong !!!")  
+            try:
+                get_admin = User.objects.get(id = token["user_id"], is_admin = True)
+                print("admin", get_admin)
+            except:
+                return badRequest("Admin not found !!!")
+            data = request.data
+            try:
+                get_request_obj = Payment_Request.objects.get(request_id = data["request_id"])
+                print("req", get_request_obj)
+            except:
+                return badRequest("No Request found !!!")
+            # try:
+            #     card_obj = Card.objects.get(card_id = data["card"], user_id__under_by = get_admin)
+            # except:
+            #     return badRequest("Card doesn't exists !!!")
+            if data["payment_type"] != "" and data["paid_amount"] != "" and data["due_paid_through"] != "": 
+                data["card"] = get_request_obj.card.card_id
+                data["user"] = get_request_obj.card.user_id.id
+                data["payment_request"] = get_request_obj.request_id
+                data["admin"] = get_admin.id
+                serializer = UserCardPaymentSerializer(data=data)
+                if serializer.is_valid():
+                    serializer.save()
+                    get_request_obj.payment_status = True
+                    return onSuccess("Payment record added successfully !!!", serializer.data)
                 else:
-                    return badRequest("Fields is missing !!!")
+                    return badRequest("Something went wrong !!!")  
             else:
-                return  badRequest("Admin not found !!!")
+                return badRequest("Fields is missing !!!")
         else:
             return unauthorisedRequest()
 

@@ -17,7 +17,7 @@ class GetPaymentRequest(APIView):
         token =  get_object(request)
         if token:    
             try:
-                get_admin = User.objects.get(id = token["user_id"])
+                get_admin = User.objects.get(id = token["user_id"], is_admin = True)
             except:
                 return badRequest("Admin not found !!!")
             request_id = request.GET.get("request_id")
@@ -47,8 +47,7 @@ class GetPaymentRequest(APIView):
                     return onSuccess("All Payment Request Objects !!!",  serializer.data)
         else:
             return unauthorisedRequest()
-
-
+        
 
 #--------------------- ADD PAYMENT REQUEST BY ADMIN ---------------------#
 
@@ -57,7 +56,7 @@ class AddPaymentRequestByAdmin(APIView):
         token = get_object(request)
         if token:
             try:
-                get_admin = User.objects.get(id = token["user_id"])
+                get_admin = User.objects.get(id = token["user_id"], is_admin = True)
             except:
                 return badRequest("Admin not found !!!")
             data = request.data
@@ -94,7 +93,7 @@ class AddPaymentRequestByUser(APIView):
         token = get_object(request)
         if token:
             try:
-                get_user = User.objects.get(id = token["user_id"])
+                get_user = User.objects.get(id = token["user_id"], is_verified = True)
             except:
                 return badRequest("User not found !!!")
             data = request.data

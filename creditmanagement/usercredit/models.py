@@ -114,26 +114,6 @@ class Card(models.Model):
     def __str__(self):
         return self.card_bank_name      
 
-
-#-------------------------------- TRANSACTION MODEL ------------------------------#
-
-class Transaction(models.Model):
-    transaction_id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
-    admin = models.ForeignKey(User, on_delete=models.CASCADE,null=True, related_name="admin_id")
-    user = models.ForeignKey(User, on_delete=models.CASCADE,null=True, related_name="user_id")
-    card = models.ForeignKey(Card, on_delete=models.SET_NULL, null=True, related_name="user_card_id")
-    due_paid_through = models.CharField(max_length=100)
-    paid_amount = models.FloatField(default=0, blank=True, null=True)
-    due_paid_at = models.DateTimeField(default= datetime.now)
-    payment_type = models.CharField(max_length=30)
-    charges = models.FloatField(default=0, blank=True, null=True)
-    commission = models.FloatField(validators=percentage_validators, blank=True, null=True, default=2.0, editable=True)
-    # profit_amount = models.FloatField(null=True,blank=True)
-
-    def __str__(self) :
-        return self.due_paid_through
-
-
 #---------------------------------- PAYMENT REQUEST MODEL ---------------------------#
 
 class Payment_Request(models.Model):
@@ -152,3 +132,25 @@ class Payment_Request(models.Model):
 
     def __str__(self) :
             return self.payment_method
+
+#-------------------------------- TRANSACTION MODEL ------------------------------#
+
+class Transaction(models.Model):
+    transaction_id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
+    admin = models.ForeignKey(User, on_delete=models.CASCADE,null=True, related_name="admin_id")
+    user = models.ForeignKey(User, on_delete=models.CASCADE,null=True, related_name="user_id")
+    card = models.ForeignKey(Card, on_delete=models.SET_NULL, null=True, related_name="user_card_id")
+    payment_request = models.ForeignKey(Payment_Request, on_delete=models.SET_NULL, null=True, related_name="payment_request_id")
+    due_paid_through = models.CharField(max_length=100)
+    paid_amount = models.FloatField(default=0, blank=True, null=True)
+    due_paid_at = models.DateTimeField(default= datetime.now)
+    payment_type = models.CharField(max_length=30)
+    charges = models.FloatField(default=0, blank=True, null=True)
+    commission = models.FloatField(validators=percentage_validators, blank=True, null=True, default=0, editable=True)
+    # profit_amount = models.FloatField(null=True,blank=True)
+
+    def __str__(self) :
+        return self.due_paid_through
+
+
+
