@@ -94,23 +94,25 @@ class UserCardPayemtRecord(APIView):
                 print("req", get_request_obj)
             except:
                 return badRequest("No Request found !!!")
-            # try:
-            #     card_obj = Card.objects.get(card_id = data["card"], user_id__under_by = get_admin)
-            # except:
-            #     return badRequest("Card doesn't exists !!!")
             if data["payment_type"] != "" and data["paid_amount"] != "" and data["due_paid_through"] != "": 
                 data["card"] = get_request_obj.card.card_id
                 data["user"] = get_request_obj.card.user_id.id
                 data["payment_request"] = get_request_obj.request_id
                 data["admin"] = get_admin.id
+                get_request_obj.payment_status = data["payment_status"]
+                get_request_obj.save()
                 serializer = UserCardPaymentSerializer(data=data)
+                
                 if serializer.is_valid():
                     serializer.save()
-                    # get_request_obj.payment_status = True
-                    get_request_obj.payment_status = data["payment_status"]
+                    # get_transaction_record = Transaction.objects.get(transaction_id = serializer.data["transaction_id"])
+                    # get_transaction_record.payment_request.payment_status = data["payment_status"]
                     return onSuccess("Payment record added successfully !!!", serializer.data)
+
                 else:
-                    return badRequest("Something went wrong !!!")  
+                    return badRequest(serializer.errors)  
+
+                    # return badRequest("Something went wrong !!!")  
             else:
                 return badRequest("Fields is missing !!!")
         else:

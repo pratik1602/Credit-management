@@ -7,11 +7,19 @@ from usercredit.models import *
 #         model = Transaction
 #         fields = "__all__"
 
+# class RequestDetailsSerializer(serializers.ModelSerializer):
+#     # payment_status = serializers.BooleanField()
+
+#     class Meta:
+#         model = Payment_Request
+#         fields = ["payment_status"]
+
 #---------------------- ADD PAYMENT RECORD SERIALIZER --------------------#
 
 class UserCardPaymentSerializer(serializers.ModelSerializer):
     charges = serializers.FloatField(required = False)
     commission = serializers.FloatField(required = False)
+    # payment_status = serializers.BooleanField()
 
     class Meta:
         model = Transaction
