@@ -7,7 +7,7 @@ from usercredit.api.serializers import *
 
 class UserCardSerializer(serializers.ModelSerializer):
     # card_number = serializers.IntegerField(read_only = True)
-    # commission = serializers.FloatField(read_only=True)
+    commission = serializers.FloatField(required=False)
 
     class Meta:
         model = Card

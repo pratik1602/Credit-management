@@ -41,7 +41,7 @@ class AllTransactionRecordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ["transaction_id","admin","user", "card", "payment_request","due_paid_at", "paid_amount", "due_paid_through", "charges", "commission"]
+        fields = ["transaction_id","admin","user", "card", "payment_request","due_paid_at", "paid_amount",  "payment_type", "due_paid_through", "charges", "commission"]
 
 class EditTransactionRecordSerializer(serializers.ModelSerializer):
 

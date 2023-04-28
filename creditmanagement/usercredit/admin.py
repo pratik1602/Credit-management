@@ -106,7 +106,7 @@ admin.site.register(Transaction, TransactionAdmin)
 #-------------------- PAYMENT REQUEST MODEL ADMIN -----------------------#
 
 class PaymentRequestAdmin(admin.ModelAdmin):
-    list_display = ['request_id', 'user', 'card', 'payment_method', 'due_amount', 'due_date', 'requested_by']
+    list_display = ['request_id', 'user', 'card', 'payment_method', 'payment_status', 'due_amount', 'due_date', 'requested_by']
     list_filter = ['card']
     list_per_page = 10
 

@@ -106,7 +106,8 @@ class UserCardPayemtRecord(APIView):
                 serializer = UserCardPaymentSerializer(data=data)
                 if serializer.is_valid():
                     serializer.save()
-                    get_request_obj.payment_status = True
+                    # get_request_obj.payment_status = True
+                    get_request_obj.payment_status = data["payment_status"]
                     return onSuccess("Payment record added successfully !!!", serializer.data)
                 else:
                     return badRequest("Something went wrong !!!")  
@@ -115,47 +116,47 @@ class UserCardPayemtRecord(APIView):
         else:
             return unauthorisedRequest()
 
-class UpdateDeleteTransactionRecord(APIView):
-    def patch(self, request):
-        token = get_object(request)
-        if token:
-            get_admin = User.objects.get(id = token["user_id"])
-            if get_admin and get_admin.is_admin:
-                data = request.data
-                if data["due_paid_through"] != "" and data["paid_amount"] != "" and data["due_paid_date"] != "" and data["due_paid_time"] != "":
-                    try:
-                        get_transaction = Transaction.objects.get(transaction_id = data["transaction_id"])
-                    except:
-                        return badRequest("No Record found !!!")
-                    serializer = EditTransactionRecordSerializer(get_transaction, data=data, partial = True)
-                    if serializer.is_valid():
-                        serializer.save()
-                        return onSuccess("Record Updated Successfully !!!", serializer.data)
-                    else:
-                        return badRequest("Something went wrong !!!")
-                else:
-                    return badRequest("Fields is missing !!!")
-            else:
-                return badRequest("Admin not found !!!")
-        else:
-            return unauthorisedRequest()
+# class UpdateDeleteTransactionRecord(APIView):
+#     def patch(self, request):
+#         token = get_object(request)
+#         if token:
+#             get_admin = User.objects.get(id = token["user_id"])
+#             if get_admin and get_admin.is_admin:
+#                 data = request.data
+#                 if data["due_paid_through"] != "" and data["paid_amount"] != "" and data["due_paid_date"] != "" and data["due_paid_time"] != "":
+#                     try:
+#                         get_transaction = Transaction.objects.get(transaction_id = data["transaction_id"])
+#                     except:
+#                         return badRequest("No Record found !!!")
+#                     serializer = EditTransactionRecordSerializer(get_transaction, data=data, partial = True)
+#                     if serializer.is_valid():
+#                         serializer.save()
+#                         return onSuccess("Record Updated Successfully !!!", serializer.data)
+#                     else:
+#                         return badRequest("Something went wrong !!!")
+#                 else:
+#                     return badRequest("Fields is missing !!!")
+#             else:
+#                 return badRequest("Admin not found !!!")
+#         else:
+#             return unauthorisedRequest()
         
-    def delete(self, request):
-        token = get_object(request)
-        if token:
-            get_admin = User.objects.get(id = token['user_id'])
-            if get_admin and get_admin.is_admin:
-                transaction_id = request.GET.get("transaction_id") 
-                try:
-                    get_record = Transaction.objects.get(transaction_id = transaction_id)
-                    get_record.delete()
-                    return onSuccess("Record deleted successfully !!!", 1)
-                except:
-                    return badRequest("Record not found !!!")
-            else:
-                return badRequest("Admin not found !!!")
-        else:
-            return unauthorisedRequest()
+#     def delete(self, request):
+#         token = get_object(request)
+#         if token:
+#             get_admin = User.objects.get(id = token['user_id'])
+#             if get_admin and get_admin.is_admin:
+#                 transaction_id = request.GET.get("transaction_id") 
+#                 try:
+#                     get_record = Transaction.objects.get(transaction_id = transaction_id)
+#                     get_record.delete()
+#                     return onSuccess("Record deleted successfully !!!", 1)
+#                 except:
+#                     return badRequest("Record not found !!!")
+#             else:
+#                 return badRequest("Admin not found !!!")
+#         else:
+#             return unauthorisedRequest()
 
 
 
