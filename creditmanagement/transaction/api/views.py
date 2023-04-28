@@ -27,9 +27,11 @@ class PaymentRecords(APIView):
             user_id = request.GET.get("user_id")
             card_id = request.GET.get("card_id")
             request_id = request.GET.get("request_id")
+            payment_status = request.GET.get("payment_status")
+
             if transaction_id != None or 0:
                 try:
-                    record_obj = Transaction.objects.get(transaction_id = transaction_id)
+                    record_obj = Transaction.objects.get(transaction_id = transaction_id, admin = get_admin)
                     serializer = AllTransactionRecordSerializer(record_obj)
                     return onSuccess("Transaction Record !!!", serializer.data)
                 except:
@@ -40,7 +42,7 @@ class PaymentRecords(APIView):
                     get_user = User.objects.get(id = user_id)
                 except:
                     return badRequest("User not found !!!")
-                record_objs = Transaction.objects.filter(user = get_user)
+                record_objs = Transaction.objects.filter(user = get_user, admin = get_admin)
                 if record_objs.exists():
                     serializer = AllTransactionRecordSerializer(record_objs, many = True)
                     return onSuccess("User's all transactions !!!", serializer.data)
@@ -49,22 +51,31 @@ class PaymentRecords(APIView):
                     return onSuccess("No Transactions found for user !!!", serializer.data)
                 
             elif card_id != None or 0:
-                record_objs = Transaction.objects.filter(card__card_id = card_id)
+                record_objs = Transaction.objects.filter(card__card_id = card_id, admin = get_admin)
                 if record_objs:
                     serializer = AllTransactionRecordSerializer(record_objs, many = True)
-                    return onSuccess("Records with Card number !!!", serializer.data)
+                    return onSuccess("Records with Card id !!!", serializer.data)
                 else:
                     serializer = AllTransactionRecordSerializer(record_objs, many = True)
-                    return onSuccess("No Records found with given Card number !!!", serializer.data)
+                    return onSuccess("No Records found with given Card id !!!", serializer.data)
             
             elif request_id != None or 0:
-                record_objs = Transaction.objects.filter(payment_request__request_id = request_id)
+                record_objs = Transaction.objects.filter(payment_request__request_id = request_id, admin = get_admin)
                 if record_objs:
                     serializer = AllTransactionRecordSerializer(record_objs, many = True)
                     return onSuccess("Records with request id !!!", serializer.data)
                 else:
                     serializer = AllTransactionRecordSerializer(record_objs, many = True)
                     return onSuccess("No Records found with given request id !!!", serializer.data)
+                
+            elif payment_status != None:
+                record_objs = Transaction.objects.filter(payment_request__payment_status = payment_status, admin = get_admin)
+                if record_objs:
+                    serializer = AllTransactionRecordSerializer(record_objs, many = True)
+                    return onSuccess("Records with payment status !!!", serializer.data)
+                else:
+                    serializer = AllTransactionRecordSerializer(record_objs, many = True)
+                    return onSuccess("No Records with payment status !!!", serializer.data)
             else:
                 all_records_objs = Transaction.objects.filter(admin = get_admin)
                 if all_records_objs:
