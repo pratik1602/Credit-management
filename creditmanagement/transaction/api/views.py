@@ -116,14 +116,15 @@ class UserCardPayemtRecord(APIView):
                 
                 if serializer.is_valid():
                     serializer.save()
-                    # get_transaction_record = Transaction.objects.get(transaction_id = serializer.data["transaction_id"])
-                    # get_transaction_record.payment_request.payment_status = data["payment_status"]
+                    get_transaction_record = Transaction.objects.get(transaction_id = serializer.data["transaction_id"])
+                    get_transaction_record.profit_amount = get_transaction_record.paid_amount * get_transaction_record.commission /100 + get_transaction_record.charges
+                    get_transaction_record.save()
                     return onSuccess("Payment record added successfully !!!", serializer.data)
 
                 else:
-                    return badRequest(serializer.errors)  
+                    # return badRequest(serializer.errors)  
 
-                    # return badRequest("Something went wrong !!!")  
+                    return badRequest("Something went wrong !!!")  
             else:
                 return badRequest("Fields is missing !!!")
         else:

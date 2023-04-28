@@ -104,7 +104,6 @@ class Card(models.Model):
     updated_by=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='updated_by_user', on_delete=models.SET_NULL,  null=True, blank=True)
     created_by=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='created_by_user',on_delete=models.SET_NULL,  null=True, blank=True)
     paid_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='paid_by_user', on_delete=models.SET_NULL, null=True, blank=True) 
-    profit_amount = models.FloatField(null=True,blank=True)
     commission_paid_through = models.CharField(max_length=100, blank= True, null= True)
     created_at = models.DateTimeField(default= datetime.now)
     modified_at = models.DateTimeField(default=datetime.now)
@@ -147,8 +146,9 @@ class Transaction(models.Model):
     payment_type = models.CharField(max_length=30)
     charges = models.FloatField(default=0, blank=True, null=True)
     commission = models.FloatField(validators=percentage_validators, blank=True, null=True, default=0, editable=True)
-    # profit_amount = models.FloatField(null=True,blank=True)
-
+    profit_amount = models.FloatField(null=True,blank=True)
+    payment_received = models.BooleanField(default=False)
+    
     def __str__(self) :
         return self.due_paid_through
 
