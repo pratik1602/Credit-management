@@ -3,7 +3,7 @@ from django.contrib.auth.models import  AbstractBaseUser
 from core.cardValidate import *
 from usercredit.manager import *
 from django.core.validators import MaxValueValidator, MinValueValidator
-percentage_validators=[MinValueValidator(0.9), MaxValueValidator(100)]
+percentage_validators=[MinValueValidator(0), MaxValueValidator(100)]
 from django.conf import settings
 from usercredit.utils import *
 from django.contrib.auth.models import PermissionsMixin
