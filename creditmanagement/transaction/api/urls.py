@@ -10,7 +10,7 @@ urlpatterns = [
     path ('add-payment-record', UserCardPayemtRecord.as_view(), name="UserCardPayemtRecord"),
 
     #------------ UPDATE AND DELETE PAYMENT RECORD (ADMIN ACCESS) -------#
-    # path ('edit-payment-record', UpdateDeleteTransactionRecord.as_view(), name="UpdateDeleteTransactionRecord"),
+    path ('edit-payment-record', UpdateDeleteTransactionRecord.as_view(), name="UpdateDeleteTransactionRecord"),
     # path ('delete-payment-record', UpdateDeleteTransactionRecord.as_view(), name="UpdateDeleteTransactionRecord"),
 
 
