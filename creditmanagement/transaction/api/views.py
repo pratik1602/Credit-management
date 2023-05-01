@@ -170,9 +170,105 @@ class UpdateTransactionRecord(APIView):
 #             return unauthorisedRequest()
 
 
-#-------------------------- DASHBOARD APIS ------------------------------------#
+#--------------------------////// DASHBOARD APIS //////------------------------#
 
-class TotalCardsAndTotalProfit(APIView):
+#-------------------------- PAID, UNPAID, WITHDRAW ----------------------------#
+
+class PaidUnpaidWithdrawView(APIView):
+    def get(self, request):
+        token = get_object(request)
+        if token:
+            try:
+                get_admin = User.objects.get(id = token["user_id"], is_admin = True)
+            except:
+                return badRequest("Admin not found !!!")
+            payment_method = request.GET.get("payment_method")
+            payment_status = request.GET.get("payment_status")
+
+            if payment_status != None:
+                record_objs = Payment_Request.objects.filter(payment_status = payment_status, admin = get_admin)
+                if record_objs:
+                    serializer = PaidUnpaidWithdrawSerializer(record_objs, many = True)
+                    return onSuccess("Records with payment status !!!", serializer.data)
+                else:
+                    serializer = PaidUnpaidWithdrawSerializer(record_objs, many = True)
+                    return onSuccess("No Records with payment status !!!", serializer.data)
+            if payment_method != None:
+                record_objs = Payment_Request.objects.filter(payment_method = payment_method, admin = get_admin)
+                if record_objs:
+                    serializer = PaidUnpaidWithdrawSerializer(record_objs, many = True)
+                    return onSuccess("Records with payment method !!!", serializer.data)
+                else:
+                    serializer = PaidUnpaidWithdrawSerializer(record_objs, many = True)
+                    return onSuccess("No Records with payment method !!!", serializer.data)
+            else:
+                all_records_objs = Payment_Request.objects.filter(admin = get_admin)
+                if all_records_objs:
+                    serializer = PaidUnpaidWithdrawSerializer(all_records_objs, many=True)
+                    return onSuccess("Records List !!!",  serializer.data)
+                else:
+                    serializer = PaidUnpaidWithdrawSerializer(all_records_objs, many=True)
+                    return onSuccess("Records List !!!",  serializer.data)        
+        else:
+            return unauthorisedRequest()
+
+
+#-------------------------- PROFIT, UNPAID PROFIT, DUE AMOUNT, UNPAID AMOUNT VIEWS ----------------------------#
+
+class DueProfitUnpaidProfitView(APIView):
+    def get(self, request):
+        token = get_object(request)
+        if token:
+            try:
+                get_admin = User.objects.get(id = token["user_id"], is_admin = True)
+            except:
+                return badRequest("Admin not found !!!")
+            payment_status = request.GET.get("payment_status")
+            payment_received = request.GET.get("payment_received")
+            # payment_method = request.GET.get("payment_method")
+                
+            if payment_status != None:
+                record_objs = Transaction.objects.filter(payment_request__payment_status = payment_status, admin = get_admin)
+                if record_objs:
+                    serializer = ProfitUnpaidProfitDetailsSerializer(record_objs, many = True)
+                    return onSuccess("Records with payment status !!!", serializer.data)
+                else:
+                    serializer = ProfitUnpaidProfitDetailsSerializer(record_objs, many = True)
+                    return onSuccess("No Records with payment status !!!", serializer.data)
+                
+            elif payment_received != None:
+                record_objs = Transaction.objects.filter(payment_received = payment_received, admin = get_admin)
+                if record_objs:
+                    serializer = ProfitUnpaidProfitDetailsSerializer(record_objs, many = True)
+                    return onSuccess("Records with User's payment received status !!!", serializer.data)
+                else:
+                    serializer = ProfitUnpaidProfitDetailsSerializer(record_objs, many = True)
+                    return onSuccess("No Records with User's payment received status !!!", serializer.data)
+            
+            # elif payment_method != None:
+            #     record_objs = Transaction.objects.filter(payment_request__payment_method = payment_method)
+            #     if record_objs:
+            #         serializer = ProfitUnpaidProfitDetailsSerializer(record_objs, many = True)
+            #         return onSuccess("Records with payment method !!!", serializer.data)
+            #     else:
+            #         serializer = ProfitUnpaidProfitDetailsSerializer(record_objs, many = True)
+            #         return onSuccess("No Records with payment method !!!", serializer.data)
+            else:
+                all_records_objs = Transaction.objects.filter(admin = get_admin)
+                if all_records_objs:
+                    serializer = ProfitUnpaidProfitDetailsSerializer(all_records_objs, many=True)
+                    return onSuccess("Records List !!!",  serializer.data)
+                else:
+                    serializer = ProfitUnpaidProfitDetailsSerializer(all_records_objs, many=True)
+                    return onSuccess("Records List !!!",  serializer.data)        
+        else:
+            return unauthorisedRequest()
+
+
+#----------------------------- TOTAL CARDS AND PROFIT AMOUNT ----------------------------#
+
+class TotalCardsandProfitAmountView(APIView):
+
     def get(self, request):
         token = get_object(request)
         if token:
@@ -182,8 +278,5 @@ class TotalCardsAndTotalProfit(APIView):
                 return badRequest("Admin not found !!!")
             
         else:
-            return unauthorisedRequest()
-
-
-
+            return unauthorisedRequest() 
         

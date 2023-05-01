@@ -74,8 +74,8 @@ class AddPaymentRequestByAdmin(APIView):
                 serializer = AddPaymentRequestSerializer(data=data)
                 if serializer.is_valid():
                     serializer.save()
-                    get_requested_obj = Payment_Request.objects.get(request_id = serializer.data["request_id"])
-                    get_requested_obj.save() 
+                    # get_requested_obj = Payment_Request.objects.get(request_id = serializer.data["request_id"])
+                    # get_requested_obj.save() 
                     return onSuccess("Payment Request Added Successfully !!!", serializer.data)
                 else:
                     # return badRequest(serializer.errors)
@@ -84,6 +84,7 @@ class AddPaymentRequestByAdmin(APIView):
                 return badRequest("Fields is missing !!!")
         else:
             return unauthorisedRequest()
+        
         
 #--------------------- ADD PAYMENT REQUEST BY USER ---------------------#
 
@@ -111,8 +112,8 @@ class AddPaymentRequestByUser(APIView):
                 serializer = AddPaymentRequestSerializer(data=data)
                 if serializer.is_valid():
                     serializer.save()
-                    get_requested_obj = Payment_Request.objects.get(request_id = serializer.data["request_id"])
-                    get_requested_obj.save() 
+                    # get_requested_obj = Payment_Request.objects.get(request_id = serializer.data["request_id"])
+                    # get_requested_obj.save() 
                     return onSuccess("Payment Request Added Successfully !!!", serializer.data)
                 else:
                     # return badRequest(serializer.errors)

@@ -14,6 +14,18 @@ urlpatterns = [
     # path ('delete-payment-record', UpdateDeleteTransactionRecord.as_view(), name="UpdateDeleteTransactionRecord"),
 
 
+    #------------------------- DASHBOARD DATA VIEWS ---------------------#
+
+    #------------------------- DATA WITH STATUS AND METHOD --------------#
+    path ('paid-unpaid-withdraw', PaidUnpaidWithdrawView.as_view(), name="PaidUnpaidWithdrawView"),
+
+
+    path ('profit-unpaidprofit-view', DueProfitUnpaidProfitView.as_view(), name="DueProfitUnpaidProfitView"),
+
+    
+
+
+
 
     # path("all-record", GetrecordList.as_view(), name="GetrecordList"),
 
