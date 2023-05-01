@@ -267,16 +267,16 @@ class DueProfitUnpaidProfitView(APIView):
 
 #----------------------------- TOTAL CARDS AND PROFIT AMOUNT ----------------------------#
 
-class TotalCardsandProfitAmountView(APIView):
+# class TotalCardsandProfitAmountView(APIView):
 
-    def get(self, request):
-        token = get_object(request)
-        if token:
-            try:
-                get_admin = User.objects.get(id = token["user_id"], is_admin = True)
-            except:
-                return badRequest("Admin not found !!!")
+#     def get(self, request):
+#         token = get_object(request)
+#         if token:
+#             try:
+#                 get_admin = User.objects.get(id = token["user_id"], is_admin = True)
+#             except:
+#                 return badRequest("Admin not found !!!")
             
-        else:
-            return unauthorisedRequest() 
+#         else:
+#             return unauthorisedRequest() 
         

@@ -61,11 +61,23 @@ class EditTransactionRecordSerializer(serializers.ModelSerializer):
 #---------------------- DASHBOARD VIEWS DATA SERIALIZER ------------------------#
 
 #--------- GRAPH 2 ------------#
-class PaidUnpaidWithdrawSerializer(serializers.ModelSerializer):
 
+class TranactionDetailsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Payment_Request
-        fields = ['request_id','payment_method', 'payment_status']
+        model = Transaction
+        fields = ["paid_amount",  "payment_type"]
+
+class PaidUnpaidWithdrawSerializer(serializers.ModelSerializer):
+    paid_amount =serializers.SerializerMethodField()
+    @staticmethod
+    def get_paid_amount(obj):
+        amount = Transaction.objects.filter(payment_request = obj.request_id)
+        paid_amount = TranactionDetailsSerializer(amount, many= True)
+        return paid_amount.data
+        
+    class Meta:
+        model = Payment_Request 
+        fields = ['request_id','payment_method', 'payment_status', 'due_amount', 'paid_amount']
 
 #----------- GRAPH 1 & 3 ---------------#
 
@@ -82,7 +94,6 @@ class PaymentRequestSerializer(serializers.ModelSerializer):
 
 class ProfitUnpaidProfitDetailsSerializer(serializers.ModelSerializer):
     card = CardsCountsSerializer()
-    # user = UserDetailsSerializer()
     payment_request = PaymentRequestdetailsSerializer()
 
     class Meta:
