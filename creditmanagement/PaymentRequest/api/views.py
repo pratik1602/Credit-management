@@ -10,16 +10,16 @@ from django.db.models import Q
 
 #------- YOUR VIEWS ----------#
 
-#------------------------ GET ALL PAYMEMT REQUEST (ADMIN ACCESS) ------------------#
+#------------------------ GET ALL PAYMEMT REQUEST (ADMIN, USER) ------------------#
 
 class GetPaymentRequest(APIView):
     def get(self, request):
         token =  get_object(request)
         if token:    
             try:
-                get_admin = User.objects.get(id = token["user_id"], is_admin = True)
+                get_user = User.objects.get(id = token["user_id"])
             except:
-                return badRequest("Admin not found !!!")
+                return badRequest("Requested User not found !!!")
             request_id = request.GET.get("request_id")
             card_id = request.GET.get("card_id")
             if request_id != None or 0:
@@ -38,7 +38,7 @@ class GetPaymentRequest(APIView):
                     serializer = GetPaymentRequestSerializer(payment_request_objs, many = True)
                     return onSuccess("Payment Request Objects with Card !!!", serializer.data)
             else:
-                all_payment_request_objs = Payment_Request.objects.filter(admin = get_admin)
+                all_payment_request_objs = Payment_Request.objects.filter(Q(admin = get_user) | Q(user = get_user))
                 if all_payment_request_objs:
                     serializer = GetPaymentRequestSerializer(all_payment_request_objs, many=True)
                     return onSuccess("All Payment Request Objects !!!",  serializer.data)
