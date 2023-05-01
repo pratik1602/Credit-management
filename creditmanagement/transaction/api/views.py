@@ -130,7 +130,7 @@ class UserCardPayemtRecord(APIView):
         else:
             return unauthorisedRequest()
 
-class UpdateDeleteTransactionRecord(APIView):
+class UpdateTransactionRecord(APIView):
     def patch(self, request):
         token = get_object(request)
         if token:
@@ -170,6 +170,19 @@ class UpdateDeleteTransactionRecord(APIView):
 #             return unauthorisedRequest()
 
 
+#-------------------------- DASHBOARD APIS ------------------------------------#
+
+class TotalCardsAndTotalProfit(APIView):
+    def get(self, request):
+        token = get_object(request)
+        if token:
+            try:
+                get_admin = User.objects.get(id = token["user_id"], is_admin = True)
+            except:
+                return badRequest("Admin not found !!!")
+            
+        else:
+            return unauthorisedRequest()
 
 
 
