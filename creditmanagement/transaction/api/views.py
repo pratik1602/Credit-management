@@ -140,8 +140,6 @@ class UserCardPayemtRecord(APIView):
                             if float(due_amount) == float(all_paid_sum):
                                 get_request_obj.payment_status = data["payment_status"]
                                 data["card"] = get_request_obj.card.card_id
-
-
                                 data["user"] = get_request_obj.card.user_id.id
                                 data["payment_request"] = get_request_obj.request_id
                                 data["admin"] = get_admin.id
@@ -149,6 +147,9 @@ class UserCardPayemtRecord(APIView):
                                 serializer = UserCardPaymentSerializer(data=data)
                                 if serializer.is_valid():
                                     serializer.save()
+                                    get_transaction_record = Transaction.objects.get(transaction_id = serializer.data["transaction_id"])
+                                    get_transaction_record.profit_amount = get_transaction_record.paid_amount * get_transaction_record.profit /100 + get_transaction_record.charges
+                                    get_transaction_record.save()
                                     return onSuccess("Partial payment record added successfully", serializer.data)
                                 else:
                                     return badRequest(serializer.errors)
@@ -161,7 +162,10 @@ class UserCardPayemtRecord(APIView):
                                     serializer = UserCardPaymentSerializer(data=data)
                                     if serializer.is_valid():
                                         serializer.save()
-                                        return onSuccess("Record added successfully", serializer.data)
+                                        get_transaction_record = Transaction.objects.get(transaction_id = serializer.data["transaction_id"])
+                                        get_transaction_record.profit_amount = get_transaction_record.paid_amount * get_transaction_record.profit /100 + get_transaction_record.charges
+                                        get_transaction_record.save()
+                                        return onSuccess("Partial payment record added successfully", serializer.data)
                                     else:
                                         badRequest(serializer.errors)                            
                                 else:
@@ -175,7 +179,10 @@ class UserCardPayemtRecord(APIView):
                                 serializer = UserCardPaymentSerializer(data=data)
                                 if serializer.is_valid():
                                     serializer.save()
-                                    return onSuccess("Record added successfully", serializer.data)
+                                    get_transaction_record = Transaction.objects.get(transaction_id = serializer.data["transaction_id"])
+                                    get_transaction_record.profit_amount = get_transaction_record.paid_amount * get_transaction_record.profit /100 + get_transaction_record.charges
+                                    get_transaction_record.save()
+                                    return onSuccess("Partial payment record added successfully", serializer.data)
                                 else:
                                     badRequest(serializer.errors)                            
                             else:
