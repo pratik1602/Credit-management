@@ -96,13 +96,11 @@ class UserCardPayemtRecord(APIView):
         if token:
             try:
                 get_admin = User.objects.get(id = token["user_id"], is_admin = True)
-                print("admin", get_admin)
             except:
                 return badRequest("Admin not found !!!")
             data = request.data
             try:
                 get_request_obj = Payment_Request.objects.get(request_id = data["request_id"])
-                print("req", get_request_obj)
             except:
                 return badRequest("No Request found !!!")
             
@@ -137,11 +135,13 @@ class UserCardPayemtRecord(APIView):
                             for i in serializer.data:
                                 paid_sum += int(i["paid_amount"]) 
                             all_paid_sum = paid_sum + data["paid_amount"]
-                            if all_paid_sum > due_amount:
+                            if float(all_paid_sum) > float(due_amount):
                                 return badRequest("Sum amount is not matching !!!")
-                            if due_amount == all_paid_sum:
+                            if float(due_amount) == float(all_paid_sum):
                                 get_request_obj.payment_status = data["payment_status"]
                                 data["card"] = get_request_obj.card.card_id
+
+
                                 data["user"] = get_request_obj.card.user_id.id
                                 data["payment_request"] = get_request_obj.request_id
                                 data["admin"] = get_admin.id
@@ -153,7 +153,7 @@ class UserCardPayemtRecord(APIView):
                                 else:
                                     return badRequest(serializer.errors)
                             else:
-                                if data['paid_amount'] < due_amount:
+                                if float(data['paid_amount']) < float(due_amount):
                                     data["card"] = get_request_obj.card.card_id
                                     data["user"] = get_request_obj.card.user_id.id
                                     data["payment_request"] = get_request_obj.request_id
@@ -167,7 +167,7 @@ class UserCardPayemtRecord(APIView):
                                 else:
                                     return badRequest("You can not enter more than due amount !!!")
                         else:
-                            if data['paid_amount'] < due_amount:
+                            if float(data['paid_amount']) < float(due_amount):
                                 data["card"] = get_request_obj.card.card_id
                                 data["user"] = get_request_obj.card.user_id.id
                                 data["payment_request"] = get_request_obj.request_id
