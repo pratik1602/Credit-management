@@ -145,7 +145,8 @@ class Transaction(models.Model):
     due_paid_at = models.DateTimeField(default= datetime.now)
     payment_type = models.CharField(max_length=30)
     charges = models.FloatField(default=0, blank=True, null=True)
-    commission = models.FloatField(validators=percentage_validators, blank=True, null=True, default=0, editable=True)
+    # commission = models.FloatField(validators=percentage_validators, blank=True, null=True, default=0, editable=True)
+    profit = models.FloatField(validators=percentage_validators, blank=True, null=True, default=0, editable=True)
     profit_amount = models.FloatField(null=True,blank=True)
     payment_received = models.BooleanField(default=False)
     

@@ -18,12 +18,12 @@ from usercredit.models import *
 
 class UserCardPaymentSerializer(serializers.ModelSerializer):
     charges = serializers.FloatField(required = False)
-    commission = serializers.FloatField(required = False)
+    profit = serializers.FloatField(required = False)
     # payment_status = serializers.BooleanField()
 
     class Meta:
         model = Transaction
-        fields = ["transaction_id","admin","card", "user", "payment_request", "paid_amount", "payment_type", "due_paid_through", "charges", "commission"]
+        fields = ["transaction_id","admin","card", "user", "payment_request", "paid_amount", "payment_type", "due_paid_through", "charges", "profit"]
 
 
 class CardDetailsSerializer(serializers.ModelSerializer):
@@ -49,7 +49,7 @@ class AllTransactionRecordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ["transaction_id","admin","user", "card", "payment_request","due_paid_at", "paid_amount",  "payment_type", "due_paid_through", "charges", "commission", "profit_amount", "payment_received"]
+        fields = ["transaction_id","admin","user", "card", "payment_request","due_paid_at", "paid_amount",  "payment_type", "due_paid_through", "charges", "profit", "profit_amount", "payment_received"]
 
 class EditTransactionRecordSerializer(serializers.ModelSerializer):
 
@@ -98,5 +98,5 @@ class ProfitUnpaidProfitDetailsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ["card", "payment_request","due_paid_at", "paid_amount",  "payment_type", "due_paid_through", "charges", "commission", "profit_amount", "payment_received"]
+        fields = ["card", "payment_request","due_paid_at", "paid_amount",  "payment_type", "due_paid_through", "charges", "profit", "profit_amount", "payment_received"]
 
