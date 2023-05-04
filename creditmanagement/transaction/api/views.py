@@ -107,50 +107,81 @@ class UserCardPayemtRecord(APIView):
                 return badRequest("No Request found !!!")
             
             if get_request_obj.payment_method == "Deposit":
-                if data["payment_type"] != "" and data["payment_type"] == "Full payment":
-                    if data["paid_amount"] != "" and data["paid_amount"] == get_request_obj.due_amount:
-                        if data["due_paid_through"] != "": 
-                            data["card"] = get_request_obj.card.card_id
-                            data["user"] = get_request_obj.card.user_id.id
-                            data["payment_request"] = get_request_obj.request_id
-                            data["admin"] = get_admin.id
-                            get_request_obj.payment_status = data["payment_status"]
-                            get_request_obj.save()
-                            serializer = UserCardPaymentSerializer(data=data)
-                            if serializer.is_valid():
-                                serializer.save()
-                                get_transaction_record = Transaction.objects.get(transaction_id = serializer.data["transaction_id"])
-                                get_transaction_record.profit_amount = get_transaction_record.paid_amount * get_transaction_record.profit /100 + get_transaction_record.charges
-                                get_transaction_record.save()
-                                return onSuccess("Full Payment record added successfully !!!", serializer.data)
+                if data["payment_type"] != "":
+                    if data["payment_type"] == "Full payment":
+                        if data["paid_amount"] != "" and data["paid_amount"] == get_request_obj.due_amount:
+                            if data["due_paid_through"] != "": 
+                                data["card"] = get_request_obj.card.card_id
+                                data["user"] = get_request_obj.card.user_id.id
+                                data["payment_request"] = get_request_obj.request_id
+                                data["admin"] = get_admin.id
+                                get_request_obj.payment_status = data["payment_status"]
+                                get_request_obj.save()
+                                serializer = UserCardPaymentSerializer(data=data)
+                                if serializer.is_valid():
+                                    serializer.save()
+                                    get_transaction_record = Transaction.objects.get(transaction_id = serializer.data["transaction_id"])
+                                    get_transaction_record.profit_amount = get_transaction_record.paid_amount * get_transaction_record.profit /100 + get_transaction_record.charges
+                                    get_transaction_record.save()
+                                    return onSuccess("Full Payment record added successfully !!!", serializer.data)
+                            else:
+                                return badRequest("Please enter due paid through !!!")
                         else:
-                            return badRequest("Please enter due paid through !!!")
+                            return badRequest("Please enter full payment amount !!!")
                     else:
-                        return badRequest("Please enter full payment amount !!!") 
-                else:
-                    return badRequest("Please select payment type !!!")
-            # if data["payment_type"] != "" and data["paid_amount"] != "" and data["due_paid_through"] != "": 
-            #     data["card"] = get_request_obj.card.card_id
-            #     data["user"] = get_request_obj.card.user_id.id
-            #     data["payment_request"] = get_request_obj.request_id
-            #     data["admin"] = get_admin.id
-            #     get_request_obj.payment_status = data["payment_status"]
-            #     get_request_obj.save()
-            #     serializer = UserCardPaymentSerializer(data=data)
-                
-            #     if serializer.is_valid():
-            #         serializer.save()
-            #         get_transaction_record = Transaction.objects.get(transaction_id = serializer.data["transaction_id"])
-            #         get_transaction_record.profit_amount = get_transaction_record.paid_amount * get_transaction_record.commission /100 + get_transaction_record.charges
-            #         get_transaction_record.save()
-            #         return onSuccess("Payment record added successfully !!!", serializer.data)
-
-            #     else:
-            #         # return badRequest(serializer.errors)  
-
-            #         return badRequest("Something went wrong !!!")  
-            # else:
-            #     return badRequest("Fields is missing !!!")
+                        due_amount = get_request_obj.due_amount
+                        get_transcation_records = Transaction.objects.filter(payment_request__request_id = data["request_id"])
+                        serializer = AllTransactionRecordSerializer(get_transcation_records, many = True)
+                        if len(get_transcation_records) > 0:
+                            paid_sum = 0
+                            for i in serializer.data:
+                                paid_sum += int(i["paid_amount"]) 
+                            all_paid_sum = paid_sum + data["paid_amount"]
+                            if all_paid_sum > due_amount:
+                                return badRequest("Sum amount is not matching !!!")
+                            if due_amount == all_paid_sum:
+                                get_request_obj.payment_status = data["payment_status"]
+                                data["card"] = get_request_obj.card.card_id
+                                data["user"] = get_request_obj.card.user_id.id
+                                data["payment_request"] = get_request_obj.request_id
+                                data["admin"] = get_admin.id
+                                get_request_obj.save()
+                                serializer = UserCardPaymentSerializer(data=data)
+                                if serializer.is_valid():
+                                    serializer.save()
+                                    return onSuccess("Partial payment record added successfully", serializer.data)
+                                else:
+                                    return badRequest(serializer.errors)
+                            else:
+                                if data['paid_amount'] < due_amount:
+                                    data["card"] = get_request_obj.card.card_id
+                                    data["user"] = get_request_obj.card.user_id.id
+                                    data["payment_request"] = get_request_obj.request_id
+                                    data["admin"] = get_admin.id
+                                    serializer = UserCardPaymentSerializer(data=data)
+                                    if serializer.is_valid():
+                                        serializer.save()
+                                        return onSuccess("Record added successfully", serializer.data)
+                                    else:
+                                        badRequest(serializer.errors)                            
+                                else:
+                                    return badRequest("You can not enter more than due amount !!!")
+                        else:
+                            if data['paid_amount'] < due_amount:
+                                data["card"] = get_request_obj.card.card_id
+                                data["user"] = get_request_obj.card.user_id.id
+                                data["payment_request"] = get_request_obj.request_id
+                                data["admin"] = get_admin.id
+                                serializer = UserCardPaymentSerializer(data=data)
+                                if serializer.is_valid():
+                                    serializer.save()
+                                    return onSuccess("Record added successfully", serializer.data)
+                                else:
+                                    badRequest(serializer.errors)                            
+                            else:
+                                return badRequest("You can not enter more than due amount !!!")
+            else:
+                return badRequest("Please select payment type !!!")
         else:
             return unauthorisedRequest()
 
@@ -176,22 +207,22 @@ class UpdateTransactionRecord(APIView):
         else:
             return unauthorisedRequest()
         
-#     def delete(self, request):
-#         token = get_object(request)
-#         if token:
-#             get_admin = User.objects.get(id = token['user_id'])
-#             if get_admin and get_admin.is_admin:
-#                 transaction_id = request.GET.get("transaction_id") 
-#                 try:
-#                     get_record = Transaction.objects.get(transaction_id = transaction_id)
-#                     get_record.delete()
-#                     return onSuccess("Record deleted successfully !!!", 1)
-#                 except:
-#                     return badRequest("Record not found !!!")
-#             else:
-#                 return badRequest("Admin not found !!!")
-#         else:
-#             return unauthorisedRequest()
+    def delete(self, request):
+        token = get_object(request)
+        if token:
+            get_admin = User.objects.get(id = token['user_id'])
+            if get_admin and get_admin.is_admin:
+                transaction_id = request.GET.get("transaction_id") 
+                try:
+                    get_record = Transaction.objects.get(transaction_id = transaction_id)
+                    get_record.delete()
+                    return onSuccess("Record deleted successfully !!!", 1)
+                except:
+                    return badRequest("Record not found !!!")
+            else:
+                return badRequest("Admin not found !!!")
+        else:
+            return unauthorisedRequest()
 
 
 #--------------------------////// DASHBOARD APIS //////------------------------#
