@@ -23,4 +23,4 @@ class GetPaymentRequestSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Payment_Request
-        fields = ['request_id', 'card','due_amount', 'due_date', 'payment_method', 'payment_status']
+        fields = ['request_id', 'card','due_amount', 'due_date', 'payment_method', 'payment_status', 'cycle_deposit_status', 'cycle_withdraw_status']

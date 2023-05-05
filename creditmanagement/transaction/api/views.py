@@ -68,16 +68,16 @@ class PaymentRecords(APIView):
                     serializer = AllTransactionRecordSerializer(record_objs, many = True)
                     return onSuccess("No Records found with given request id !!!", serializer.data)
                 
-            elif payment_status != None:
-                record_objs = Transaction.objects.filter(payment_request__payment_status = payment_status, admin = get_admin)
-                if record_objs:
-                    serializer = AllTransactionRecordSerializer(record_objs, many = True)
-                    return onSuccess("Records with payment status !!!", serializer.data)
-                else:
-                    serializer = AllTransactionRecordSerializer(record_objs, many = True)
-                    return onSuccess("No Records with payment status !!!", serializer.data)
+            # elif payment_status != None:
+            #     record_objs = Transaction.objects.filter(payment_request__payment_status = payment_status, admin = get_admin)
+            #     if record_objs:
+            #         serializer = AllTransactionRecordSerializer(record_objs, many = True)
+            #         return onSuccess("Records with payment status !!!", serializer.data)
+            #     else:
+            #         serializer = AllTransactionRecordSerializer(record_objs, many = True)
+            #         return onSuccess("No Records with payment status !!!", serializer.data)
             else:
-                all_records_objs = Transaction.objects.filter(admin = get_admin)
+                all_records_objs = Transaction.objects.filter(admin = get_admin, payment_request__payment_status = True)
                 if all_records_objs:
                     serializer = AllTransactionRecordSerializer(all_records_objs, many=True)
                     return onSuccess("Records List !!!",  serializer.data)
@@ -195,59 +195,78 @@ class UserCardPayemtRecord(APIView):
                     return badRequest("Please select payment type !!!")
                 
             elif get_request_obj.payment_method == "Cycle":
-
-                if data["payment_type"] != "":
-                    if data["payment_type"] == "Full payment":
-                        if data["paid_amount"] != "" and data["paid_amount"] >= get_request_obj.due_amount:
-                            if data["due_paid_through"] != "": 
-                                data["card"] = get_request_obj.card.card_id
-                                data["user"] = get_request_obj.card.user_id.id
-                                data["payment_request"] = get_request_obj.request_id
-                                data["admin"] = get_admin.id
-                                get_request_obj.cycle_deposit_status = data["cycle_deposit_status"]
-                                get_request_obj.payment_status = data["payment_status"]
-                                get_request_obj.save()
-                                serializer = UserCardCycleandWithdrawPaymentSerializer(data=data)
-                                if serializer.is_valid():
-                                    serializer.save()
-                                    get_transaction_record = Transaction.objects.get(transaction_id = serializer.data["transaction_id"])
-                                    get_transaction_record.profit_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) /100
-                                    get_transaction_record.total_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) /100 + float(get_transaction_record.deposit_charges) + float(get_transaction_record.withdraw_charges) + float(get_transaction_record.paid_amount)
-                                    get_transaction_record.save()
-                                    return onSuccess("Full Payment record added successfully !!!", serializer.data)
-                            else:
-                                return badRequest("Please enter due paid through !!!")
-                        else:
-                            return badRequest("Please enter valid payment amount !!!")
-                    else:
-                        due_amount = get_request_obj.due_amount
-                        get_transcation_records = Transaction.objects.filter(payment_request__request_id = data["request_id"])
-                        serializer = AllTransactionRecordSerializer(get_transcation_records, many = True)
-                        if len(get_transcation_records) > 0:
-                            paid_sum = float(0)
-                            for i in serializer.data:
-                                paid_sum += float(i["paid_amount"])
-                            all_paid_sum = float(paid_sum) + float(data["paid_amount"])
-                            # if float(all_paid_sum) > float(due_amount):
-                            #     return badRequest("Sum amount is not matching !!!")
-                            if float(due_amount) >= float(all_paid_sum):
-                                data["card"] = get_request_obj.card.card_id
-                                data["user"] = get_request_obj.card.user_id.id
-                                data["payment_request"] = get_request_obj.request_id
-                                data["admin"] = get_admin.id
-                                get_request_obj.cycle_deposit_status = data["cycle_deposit_status"]
-                                # get_request_obj.payment_status = data["payment_status"]
-                                get_request_obj.save()
-                                serializer = UserCardCycleandWithdrawPaymentSerializer(data=data)
-                                if serializer.is_valid():
-                                    serializer.save()
-                                    get_transaction_record = Transaction.objects.get(transaction_id = serializer.data["transaction_id"])
-                                    get_transaction_record.profit_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) /100
-                                    get_transaction_record.total_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) /100 + float(get_transaction_record.deposit_charges) + float(get_transaction_record.withdraw_charges) + float(get_transaction_record.paid_amount)
-                                    get_transaction_record.save()
-                                    return onSuccess("Partial payment record added successfully", serializer.data)
+                if get_request_obj.payment_method == "Cycle" and get_request_obj.cycle_deposit_status != True: 
+                    print("if") 
+                    if data["payment_type"] != "":
+                        if data["payment_type"] == "Full payment":
+                            if data["paid_amount"] != "" and data["paid_amount"] >= get_request_obj.due_amount:
+                                if data["due_paid_through"] != "": 
+                                    data["card"] = get_request_obj.card.card_id
+                                    data["user"] = get_request_obj.card.user_id.id
+                                    data["payment_request"] = get_request_obj.request_id
+                                    data["admin"] = get_admin.id
+                                    get_request_obj.payment_method_flag = data["payment_method_flag"]
+                                    get_request_obj.cycle_deposit_status = data["cycle_deposit_status"]
+                                    get_request_obj.save()
+                                    serializer = UserCardCycleandWithdrawPaymentSerializer(data=data)
+                                    if serializer.is_valid():
+                                        serializer.save()
+                                        get_transaction_record = Transaction.objects.get(transaction_id = serializer.data["transaction_id"])
+                                        get_transaction_record.profit_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) /100
+                                        get_transaction_record.total_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) /100 + float(get_transaction_record.deposit_charges) + float(get_transaction_record.withdraw_charges) + float(get_transaction_record.paid_amount)
+                                        get_transaction_record.save()
+                                        return onSuccess("Full Payment record added successfully !!!", serializer.data)
                                 else:
-                                    return badRequest(serializer.errors)
+                                    return badRequest("Please enter due paid through !!!")
+                            else:
+                                return badRequest("Please enter valid payment amount !!!")
+                        else:
+                            due_amount = get_request_obj.due_amount
+                            get_transcation_records = Transaction.objects.filter(payment_request__request_id = data["request_id"])
+                            serializer = AllTransactionRecordSerializer(get_transcation_records, many = True)
+                            if len(get_transcation_records) > 0:
+                                paid_sum = float(0)
+                                for i in serializer.data:
+                                    paid_sum += float(i["paid_amount"])
+                                all_paid_sum = float(paid_sum) + float(data["paid_amount"])
+                                # if float(all_paid_sum) > float(due_amount):
+                                #     return badRequest("Sum amount is not matching !!!")
+                                if float(due_amount) >= float(all_paid_sum):
+                                    data["card"] = get_request_obj.card.card_id
+                                    data["user"] = get_request_obj.card.user_id.id
+                                    data["payment_request"] = get_request_obj.request_id
+                                    data["admin"] = get_admin.id
+                                    get_request_obj.payment_method_flag = data["payment_method_flag"]
+                                    get_request_obj.cycle_deposit_status = data["cycle_deposit_status"]
+                                    get_request_obj.save()
+                                    serializer = UserCardCycleandWithdrawPaymentSerializer(data=data)
+                                    if serializer.is_valid():
+                                        serializer.save()
+                                        get_transaction_record = Transaction.objects.get(transaction_id = serializer.data["transaction_id"])
+                                        get_transaction_record.profit_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) /100
+                                        get_transaction_record.total_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) /100 + float(get_transaction_record.deposit_charges) + float(get_transaction_record.withdraw_charges) + float(get_transaction_record.paid_amount)
+                                        get_transaction_record.save()
+                                        return onSuccess("Partial payment record added successfully", serializer.data)
+                                    else:
+                                        return badRequest(serializer.errors)
+                                else:
+                                    if float(data['paid_amount']) < float(due_amount):
+                                        data["card"] = get_request_obj.card.card_id
+                                        data["user"] = get_request_obj.card.user_id.id
+                                        data["payment_request"] = get_request_obj.request_id
+                                        data["admin"] = get_admin.id
+                                        serializer = UserCardCycleandWithdrawPaymentSerializer(data=data)
+                                        if serializer.is_valid():
+                                            serializer.save()
+                                            get_transaction_record = Transaction.objects.get(transaction_id = serializer.data["transaction_id"])
+                                            get_transaction_record.profit_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) /100
+                                            get_transaction_record.total_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) /100 + float(get_transaction_record.deposit_charges) + float(get_transaction_record.withdraw_charges) + float(get_transaction_record.paid_amount)
+                                            get_transaction_record.save()
+                                            return onSuccess("Partial payment record added successfully", serializer.data)
+                                        else:
+                                            badRequest(serializer.errors)                            
+                                    else:
+                                        return badRequest("You can not enter more than due amount !!!")
                             else:
                                 if float(data['paid_amount']) < float(due_amount):
                                     data["card"] = get_request_obj.card.card_id
@@ -266,79 +285,82 @@ class UserCardPayemtRecord(APIView):
                                         badRequest(serializer.errors)                            
                                 else:
                                     return badRequest("You can not enter more than due amount !!!")
-                        else:
-                            if float(data['paid_amount']) < float(due_amount):
-                                data["card"] = get_request_obj.card.card_id
-                                data["user"] = get_request_obj.card.user_id.id
-                                data["payment_request"] = get_request_obj.request_id
-                                data["admin"] = get_admin.id
-                                serializer = UserCardCycleandWithdrawPaymentSerializer(data=data)
-                                if serializer.is_valid():
-                                    serializer.save()
-                                    get_transaction_record = Transaction.objects.get(transaction_id = serializer.data["transaction_id"])
-                                    get_transaction_record.profit_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) /100
-                                    get_transaction_record.total_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) /100 + float(get_transaction_record.deposit_charges) + float(get_transaction_record.withdraw_charges) + float(get_transaction_record.paid_amount)
-                                    get_transaction_record.save()
-                                    return onSuccess("Partial payment record added successfully", serializer.data)
-                                else:
-                                    badRequest(serializer.errors)                            
-                            else:
-                                return badRequest("You can not enter more than due amount !!!")
-                            
-            elif get_request_obj.payment_method == "Cycle" and get_request_obj.cycle_withdraw_status != True:
-
-                if data["payment_type"] != "":
-                    if data["payment_type"] == "Full payment":
-                        if data["paid_amount"] != "" and data["paid_amount"] >= get_request_obj.due_amount:
-                            if data["due_paid_through"] != "": 
-                                data["card"] = get_request_obj.card.card_id
-                                data["user"] = get_request_obj.card.user_id.id
-                                data["payment_request"] = get_request_obj.request_id
-                                data["admin"] = get_admin.id
-                                get_request_obj.cycle_withdraw_status = data["cycle_withdraw_status"]
-                                get_request_obj.payment_status = data["payment_status"]
-                                get_request_obj.save()
-                                serializer = UserCardCycleandWithdrawPaymentSerializer(data=data)
-                                if serializer.is_valid():
-                                    serializer.save()
-                                    get_transaction_record = Transaction.objects.get(transaction_id = serializer.data["transaction_id"])
-                                    get_transaction_record.profit_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) /100
-                                    get_transaction_record.total_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) /100 + float(get_transaction_record.deposit_charges) + float(get_transaction_record.withdraw_charges) + float(get_transaction_record.paid_amount)
-                                    get_transaction_record.save()
-                                    return onSuccess("Full Payment record added successfully !!!", serializer.data)
-                            else:
-                                return badRequest("Please enter due paid through !!!")
-                        else:
-                            return badRequest("Please enter valid payment amount !!!")
                     else:
-                        due_amount = get_request_obj.due_amount
-                        get_transcation_records = Transaction.objects.filter(payment_request__request_id = data["request_id"])
-                        serializer = AllTransactionRecordSerializer(get_transcation_records, many = True)
-                        if len(get_transcation_records) > 0:
-                            paid_sum = float(0)
-                            for i in serializer.data:
-                                paid_sum += float(i["paid_amount"])
-                            all_paid_sum = float(paid_sum) + float(data["paid_amount"])
-                            # if float(all_paid_sum) > float(due_amount):
-                            #     return badRequest("Sum amount is not matching !!!")
-                            if float(due_amount) >= float(all_paid_sum):
-                                data["card"] = get_request_obj.card.card_id
-                                data["user"] = get_request_obj.card.user_id.id
-                                data["payment_request"] = get_request_obj.request_id
-                                data["admin"] = get_admin.id
-                                get_request_obj.cycle_withdraw_status = data["cycle_withdraw_status"]
-                                get_request_obj.payment_status = data["payment_status"]
-                                get_request_obj.save()
-                                serializer = UserCardCycleandWithdrawPaymentSerializer(data=data)
-                                if serializer.is_valid():
-                                    serializer.save()
-                                    get_transaction_record = Transaction.objects.get(transaction_id = serializer.data["transaction_id"])
-                                    get_transaction_record.profit_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) /100
-                                    get_transaction_record.total_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) /100 + float(get_transaction_record.deposit_charges) + float(get_transaction_record.withdraw_charges) + float(get_transaction_record.paid_amount)
-                                    get_transaction_record.save()
-                                    return onSuccess("Partial payment record added successfully", serializer.data)
+                        return badRequest("Please select payment type !!!")    
+                else:
+                    print("else")
+                    if data["payment_type"] != "":
+                        if data["payment_type"] == "Full payment":
+                            if data["paid_amount"] != "" and data["paid_amount"] >= get_request_obj.due_amount:
+                                if data["due_paid_through"] != "": 
+                                    data["card"] = get_request_obj.card.card_id
+                                    data["user"] = get_request_obj.card.user_id.id
+                                    data["payment_request"] = get_request_obj.request_id
+                                    data["admin"] = get_admin.id
+                                    get_request_obj.payment_method_flag = data["payment_method_flag"]
+                                    get_request_obj.cycle_withdraw_status = data["cycle_withdraw_status"]
+                                    get_request_obj.payment_status = data["payment_status"]
+                                    get_request_obj.save()
+                                    serializer = UserCardCycleandWithdrawPaymentSerializer(data=data)
+                                    if serializer.is_valid():
+                                        serializer.save()
+                                        get_transaction_record = Transaction.objects.get(transaction_id = serializer.data["transaction_id"])
+                                        get_transaction_record.profit_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) /100
+                                        get_transaction_record.total_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) /100 + float(get_transaction_record.deposit_charges) + float(get_transaction_record.withdraw_charges) + float(get_transaction_record.paid_amount)
+                                        get_transaction_record.save()
+                                        return onSuccess("Full Payment record added successfully !!!", serializer.data)
                                 else:
-                                    return badRequest(serializer.errors)
+                                    return badRequest("Please enter due paid through !!!")
+                            else:
+                                return badRequest("Please enter valid payment amount !!!")
+                        else:
+                            due_amount = get_request_obj.due_amount
+                            get_transcation_records = Transaction.objects.filter(payment_request__request_id = data["request_id"])
+                            serializer = AllTransactionRecordSerializer(get_transcation_records, many = True)
+                            if len(get_transcation_records) > 0:
+                                paid_sum = float(0)
+                                for i in serializer.data:
+                                    paid_sum += float(i["paid_amount"])
+                                all_paid_sum = float(paid_sum) + float(data["paid_amount"])
+                                # if float(all_paid_sum) > float(due_amount):
+                                #     return badRequest("Sum amount is not matching !!!")
+                                if float(due_amount) >= float(all_paid_sum):
+                                    data["card"] = get_request_obj.card.card_id
+                                    data["user"] = get_request_obj.card.user_id.id
+                                    data["payment_request"] = get_request_obj.request_id
+                                    data["admin"] = get_admin.id
+                                    get_request_obj.payment_method_flag = data["payment_method_flag"]
+                                    get_request_obj.cycle_withdraw_status = data["cycle_withdraw_status"]
+                                    get_request_obj.payment_status = data["payment_status"]
+                                    get_request_obj.save()
+                                    serializer = UserCardCycleandWithdrawPaymentSerializer(data=data)
+                                    if serializer.is_valid():
+                                        serializer.save()
+                                        get_transaction_record = Transaction.objects.get(transaction_id = serializer.data["transaction_id"])
+                                        get_transaction_record.profit_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) /100
+                                        get_transaction_record.total_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) /100 + float(get_transaction_record.deposit_charges) + float(get_transaction_record.withdraw_charges) + float(get_transaction_record.paid_amount)
+                                        get_transaction_record.save()
+                                        return onSuccess("Partial payment record added successfully", serializer.data)
+                                    else:
+                                        return badRequest(serializer.errors)
+                                else:
+                                    if float(data['paid_amount']) < float(due_amount):
+                                        data["card"] = get_request_obj.card.card_id
+                                        data["user"] = get_request_obj.card.user_id.id
+                                        data["payment_request"] = get_request_obj.request_id
+                                        data["admin"] = get_admin.id
+                                        serializer = UserCardCycleandWithdrawPaymentSerializer(data=data)
+                                        if serializer.is_valid():
+                                            serializer.save()
+                                            get_transaction_record = Transaction.objects.get(transaction_id = serializer.data["transaction_id"])
+                                            get_transaction_record.profit_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) /100
+                                            get_transaction_record.total_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) /100 + float(get_transaction_record.deposit_charges) + float(get_transaction_record.withdraw_charges) + float(get_transaction_record.paid_amount)
+                                            get_transaction_record.save()
+                                            return onSuccess("Partial payment record added successfully", serializer.data)
+                                        else:
+                                            badRequest(serializer.errors)                            
+                                    else:
+                                        return badRequest("You can not enter more than due amount !!!")
                             else:
                                 if float(data['paid_amount']) < float(due_amount):
                                     data["card"] = get_request_obj.card.card_id
@@ -356,26 +378,10 @@ class UserCardPayemtRecord(APIView):
                                     else:
                                         badRequest(serializer.errors)                            
                                 else:
-                                    return badRequest("You can not enter more than due amount !!!")
-                        else:
-                            if float(data['paid_amount']) < float(due_amount):
-                                data["card"] = get_request_obj.card.card_id
-                                data["user"] = get_request_obj.card.user_id.id
-                                data["payment_request"] = get_request_obj.request_id
-                                data["admin"] = get_admin.id
-                                serializer = UserCardCycleandWithdrawPaymentSerializer(data=data)
-                                if serializer.is_valid():
-                                    serializer.save()
-                                    get_transaction_record = Transaction.objects.get(transaction_id = serializer.data["transaction_id"])
-                                    get_transaction_record.profit_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) /100
-                                    get_transaction_record.total_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) /100 + float(get_transaction_record.deposit_charges) + float(get_transaction_record.withdraw_charges) + float(get_transaction_record.paid_amount)
-                                    get_transaction_record.save()
-                                    return onSuccess("Partial payment record added successfully", serializer.data)
-                                else:
-                                    badRequest(serializer.errors)                            
-                            else:
-                                return badRequest("You can not enter more than due amount !!!") 
-            
+                                    return badRequest("You can not enter more than due amount !!!") 
+                    else:
+                        return badRequest("Please select payment type !!!") 
+                       
             elif get_request_obj.payment_method == "Withdraw":
 
                 if data["payment_type"] != "":
@@ -464,8 +470,8 @@ class UserCardPayemtRecord(APIView):
                                     badRequest(serializer.errors)                            
                             else:
                                 return badRequest("You can not enter more than due amount !!!") 
-            else:
-                return badRequest("Please select payment type !!!")
+                else:
+                    return badRequest("Please select payment type !!!")
         else:
             return unauthorisedRequest()
 

@@ -52,7 +52,7 @@ class UserDetailsSerializer(serializers.ModelSerializer):
 class PaymentRequestdetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment_Request
-        fields = ['request_id', 'due_amount', 'due_date', 'payment_method', 'payment_status']
+        fields = ['request_id', 'due_amount', 'due_date', 'payment_method', 'payment_status',  'cycle_deposit_status', 'cycle_withdraw_status', 'payment_method_flag']
 
 class AllTransactionRecordSerializer(serializers.ModelSerializer):
     card = CardDetailsSerializer()

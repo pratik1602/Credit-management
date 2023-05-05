@@ -24,13 +24,13 @@ class GetPaymentRequest(APIView):
             card_id = request.GET.get("card_id")
             if request_id != None or 0:
                 try:
-                    payment_request_obj = Payment_Request.objects.get(request_id = request_id)
+                    payment_request_obj = Payment_Request.objects.get(request_id = request_id, payment_status = False)
                     serializer =  GetPaymentRequestSerializer(payment_request_obj)
                     return onSuccess("Payment Request Object !!!", serializer.data)
                 except:
                     return badRequest("No Request found !!!")
             elif card_id != None or 0:
-                payment_request_objs = Payment_Request.objects.filter(card__card_id = card_id)
+                payment_request_objs = Payment_Request.objects.filter(card__card_id = card_id, payment_status = False)
                 if payment_request_objs:
                     serializer = GetPaymentRequestSerializer(payment_request_objs, many = True)
                     return onSuccess("Payment Request Objects with Card !!!", serializer.data)
@@ -38,7 +38,7 @@ class GetPaymentRequest(APIView):
                     serializer = GetPaymentRequestSerializer(payment_request_objs, many = True)
                     return onSuccess("Payment Request Objects with Card !!!", serializer.data)
             else:
-                all_payment_request_objs = Payment_Request.objects.filter(Q(admin = get_user) | Q(user = get_user))
+                all_payment_request_objs = Payment_Request.objects.filter(Q(admin = get_user) | Q(user = get_user), payment_status = False)
                 if all_payment_request_objs:
                     serializer = GetPaymentRequestSerializer(all_payment_request_objs, many=True)
                     return onSuccess("All Payment Request Objects !!!",  serializer.data)
