@@ -16,7 +16,8 @@ from usercredit.models import *
 
 #---------------------- ADD PAYMENT RECORD SERIALIZER --------------------#
 
-class UserCardPaymentSerializer(serializers.ModelSerializer):
+#---------------------------- SERIALIZER FOR DEPOSIT METHOD --------------#
+class UserCardDepositPaymentSerializer(serializers.ModelSerializer):
     deposit_charges = serializers.FloatField(required = False)
     profit = serializers.FloatField(required = False)
     # payment_status = serializers.BooleanField()
@@ -24,6 +25,17 @@ class UserCardPaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
         fields = ["transaction_id","admin","card", "user", "payment_request", "paid_amount", "payment_type", "due_paid_through", "deposit_charges", "profit"]
+
+#-------------------------- SERIALIZER FOR CYCLE METHOD ------------------#
+class UserCardCyclePaymentSerializer(serializers.ModelSerializer):
+    deposit_charges = serializers.FloatField(required = False)
+    # withdraw
+    profit = serializers.FloatField(required = False)
+    # payment_status = serializers.BooleanField()
+
+    class Meta:
+        model = Transaction
+        fields = ["transaction_id","admin","card", "user", "payment_request", "paid_amount", "payment_type", "due_paid_through", "deposit_charges", "profit"] 
 
 
 class CardDetailsSerializer(serializers.ModelSerializer):
