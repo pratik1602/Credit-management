@@ -149,6 +149,7 @@ class Transaction(models.Model):
     # commission = models.FloatField(validators=percentage_validators, blank=True, null=True, default=0, editable=True)
     profit = models.FloatField(validators=percentage_validators, blank=True, null=True, default=0, editable=True)
     profit_amount = models.FloatField(null=True,blank=True)
+    total_amount = models.FloatField(null=True,blank=True)
     payment_received = models.BooleanField(default=False)
     
     def __str__(self) :
