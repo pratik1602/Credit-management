@@ -27,15 +27,15 @@ class UserCardDepositPaymentSerializer(serializers.ModelSerializer):
         fields = ["transaction_id","admin","card", "user", "payment_request", "paid_amount", "payment_type", "due_paid_through", "deposit_charges", "profit"]
 
 #-------------------------- SERIALIZER FOR CYCLE METHOD ------------------#
-class UserCardCyclePaymentSerializer(serializers.ModelSerializer):
+class UserCardCycleandWithdrawPaymentSerializer(serializers.ModelSerializer):
     deposit_charges = serializers.FloatField(required = False)
-    # withdraw
+    withdraw_charges = serializers.FloatField(required = False)
     profit = serializers.FloatField(required = False)
     # payment_status = serializers.BooleanField()
 
     class Meta:
         model = Transaction
-        fields = ["transaction_id","admin","card", "user", "payment_request", "paid_amount", "payment_type", "due_paid_through", "deposit_charges", "profit"] 
+        fields = ["transaction_id","admin","card", "user", "payment_request", "paid_amount", "payment_type", "due_paid_through", "deposit_charges", "profit", "withdraw_charges"] 
 
 
 class CardDetailsSerializer(serializers.ModelSerializer):
