@@ -86,7 +86,7 @@ admin.site.register(Card, CardsAdmin)
 #-------------------- TRANSACTION MODEL ADMIN -----------------------#
 
 class TransactionAdmin(admin.ModelAdmin):
-    list_display = ['transaction_id', 'card', 'paid_amount', 'due_paid_at']
+    list_display = ['transaction_id', 'card', 'paid_amount', 'profit_amount', 'total_amount', 'due_paid_at']
     list_filter = ['admin']
     list_per_page = 10
 
@@ -106,7 +106,7 @@ admin.site.register(Transaction, TransactionAdmin)
 #-------------------- PAYMENT REQUEST MODEL ADMIN -----------------------#
 
 class PaymentRequestAdmin(admin.ModelAdmin):
-    list_display = ['request_id', 'user', 'card', 'payment_method', 'payment_status', 'due_amount', 'due_date', 'requested_by']
+    list_display = ['request_id', 'user', 'card', 'payment_method', 'cycle_deposit_status','cycle_withdraw_status', 'payment_status', 'due_amount', 'due_date', 'requested_by']
     list_filter = ['card']
     list_per_page = 10
 
