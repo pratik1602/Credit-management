@@ -126,6 +126,8 @@ class Payment_Request(models.Model):
     due_date = models.DateField(null=True, blank=True) #validators=[has_expired]
     requested_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='requested_by_user',on_delete=models.SET_NULL,  null=True, blank=True)
     payment_status = models.BooleanField(default=False)
+    cycle_deposit_status = models.BooleanField(default=False)
+    cycle_withdraw_status = models.BooleanField(default=False)
     requested_at = models.DateTimeField(default= datetime.now)
     modified_at = models.DateTimeField(default=datetime.now)
 
