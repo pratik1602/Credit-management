@@ -170,7 +170,7 @@ class UserCardPayemtRecord(APIView):
                                         get_transaction_record.save()
                                         return onSuccess("Partial payment record added successfully", serializer.data)
                                     else:
-                                        badRequest(serializer.errors)                            
+                                        return badRequest(serializer.errors)                            
                                 else:
                                     return badRequest("You can not enter more than due amount !!!")
                         else:
@@ -188,7 +188,7 @@ class UserCardPayemtRecord(APIView):
                                     get_transaction_record.save()
                                     return onSuccess("Partial payment record added successfully", serializer.data)
                                 else:
-                                    badRequest(serializer.errors)                            
+                                    return badRequest(serializer.errors)                            
                             else:
                                 return badRequest("You can not enter more than due amount !!!")
                 else:
@@ -263,7 +263,7 @@ class UserCardPayemtRecord(APIView):
                                             get_transaction_record.save()
                                             return onSuccess("Partial payment record added successfully", serializer.data)
                                         else:
-                                            badRequest(serializer.errors)                            
+                                            return badRequest(serializer.errors)                            
                                     else:
                                         return badRequest("You can not enter more than due amount !!!")
                             else:
@@ -281,7 +281,7 @@ class UserCardPayemtRecord(APIView):
                                         get_transaction_record.save()
                                         return onSuccess("Partial payment record added successfully", serializer.data)
                                     else:
-                                        badRequest(serializer.errors)                            
+                                        return badRequest(serializer.errors)                            
                                 else:
                                     return badRequest("You can not enter more than due amount !!!")
                     else:
@@ -355,7 +355,7 @@ class UserCardPayemtRecord(APIView):
                                             get_transaction_record.save()
                                             return onSuccess("Partial payment record added successfully", serializer.data)
                                         else:
-                                            badRequest(serializer.errors)                            
+                                            return badRequest(serializer.errors)                            
                                     else:
                                         return badRequest("You can not enter more than due amount !!!")
                             else:
@@ -373,7 +373,7 @@ class UserCardPayemtRecord(APIView):
                                         get_transaction_record.save()
                                         return onSuccess("Partial payment record added successfully", serializer.data)
                                     else:
-                                        badRequest(serializer.errors)                            
+                                        return badRequest(serializer.errors)                            
                                 else:
                                     return badRequest("You can not enter more than due amount !!!") 
                     else:
@@ -446,7 +446,7 @@ class UserCardPayemtRecord(APIView):
                                         get_transaction_record.save()
                                         return onSuccess("Partial payment record added successfully", serializer.data)
                                     else:
-                                        badRequest(serializer.errors)                            
+                                        return badRequest(serializer.errors)                            
                                 else:
                                     return badRequest("You can not enter more than due amount !!!")
                         else:
@@ -464,7 +464,7 @@ class UserCardPayemtRecord(APIView):
                                     get_transaction_record.save()
                                     return onSuccess("Partial payment record added successfully", serializer.data)
                                 else:
-                                    badRequest(serializer.errors)                            
+                                    return badRequest(serializer.errors)                            
                             else:
                                 return badRequest("You can not enter more than due amount !!!") 
                 else:
