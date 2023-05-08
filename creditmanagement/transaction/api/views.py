@@ -139,7 +139,7 @@ class UserCardPayemtRecord(APIView):
                                 all_paid_sum = float(paid_sum) + float(data["paid_amount"])
                                 # if float(all_paid_sum) <= float(due_amount):
                                 #     return badRequest("Sum amount is not matching !!!")
-                                if float(due_amount) > float(all_paid_sum):
+                                if float(all_paid_sum) >= float(due_amount):
                                     data["card"] = get_request_obj.card.card_id
                                     data["user"] = get_request_obj.card.user_id.id
                                     data["payment_request"] = get_request_obj.request_id
@@ -235,7 +235,7 @@ class UserCardPayemtRecord(APIView):
                                     all_paid_sum = float(paid_sum) + float(data["paid_amount"])
                                     # if float(all_paid_sum) > float(due_amount):
                                     #     return badRequest("Sum amount is not matching !!!")
-                                    if float(due_amount) > float(all_paid_sum):
+                                    if float(all_paid_sum) >= float(due_amount):
                                         data["card"] = get_request_obj.card.card_id
                                         data["user"] = get_request_obj.card.user_id.id
                                         data["payment_request"] = get_request_obj.request_id
@@ -326,7 +326,7 @@ class UserCardPayemtRecord(APIView):
                                     all_paid_sum = float(paid_sum) + float(data["paid_amount"])
                                     # if float(all_paid_sum) > float(due_amount):
                                     #     return badRequest("Sum amount is not matching !!!")
-                                    if float(due_amount) > float(all_paid_sum):
+                                    if float(all_paid_sum) >= float(due_amount):
                                         data["card"] = get_request_obj.card.card_id
                                         data["user"] = get_request_obj.card.user_id.id
                                         data["payment_request"] = get_request_obj.request_id
@@ -420,7 +420,7 @@ class UserCardPayemtRecord(APIView):
                                 all_paid_sum = float(paid_sum) + float(data["paid_amount"])
                                 # if float(all_paid_sum) > float(due_amount):
                                 #     return badRequest("Sum amount is not matching !!!")
-                                if float(due_amount) > float(all_paid_sum):
+                                if float(all_paid_sum) >= float(due_amount):
                                     data["card"] = get_request_obj.card.card_id
                                     data["user"] = get_request_obj.card.user_id.id
                                     data["payment_request"] = get_request_obj.request_id
