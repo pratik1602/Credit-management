@@ -205,7 +205,7 @@ class UserCardPayemtRecord(APIView):
                                     data["user"] = get_request_obj.card.user_id.id
                                     data["payment_request"] = get_request_obj.request_id
                                     data["admin"] = get_admin.id
-                                    get_request_obj.payment_method_flag = data["payment_method_flag"]
+                                    # data["payment_method_flag"] = data
                                     get_request_obj.cycle_deposit_status = data["cycle_deposit_status"]
                                     get_request_obj.save()
                                     serializer = UserCardCycleandWithdrawPaymentSerializer(data=data)
@@ -236,7 +236,6 @@ class UserCardPayemtRecord(APIView):
                                     data["user"] = get_request_obj.card.user_id.id
                                     data["payment_request"] = get_request_obj.request_id
                                     data["admin"] = get_admin.id
-                                    get_request_obj.payment_method_flag = data["payment_method_flag"]
                                     get_request_obj.cycle_deposit_status = data["cycle_deposit_status"]
                                     get_request_obj.save()
                                     serializer = UserCardCycleandWithdrawPaymentSerializer(data=data)
@@ -297,7 +296,6 @@ class UserCardPayemtRecord(APIView):
                                     data["user"] = get_request_obj.card.user_id.id
                                     data["payment_request"] = get_request_obj.request_id
                                     data["admin"] = get_admin.id
-                                    get_request_obj.payment_method_flag = data["payment_method_flag"]
                                     get_request_obj.cycle_withdraw_status = data["cycle_withdraw_status"]
                                     get_request_obj.payment_status = data["payment_status"]
                                     get_request_obj.save()
@@ -329,7 +327,6 @@ class UserCardPayemtRecord(APIView):
                                     data["user"] = get_request_obj.card.user_id.id
                                     data["payment_request"] = get_request_obj.request_id
                                     data["admin"] = get_admin.id
-                                    get_request_obj.payment_method_flag = data["payment_method_flag"]
                                     get_request_obj.cycle_withdraw_status = data["cycle_withdraw_status"]
                                     get_request_obj.payment_status = data["payment_status"]
                                     get_request_obj.save()
