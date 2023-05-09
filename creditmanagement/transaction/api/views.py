@@ -27,7 +27,6 @@ class PaymentRecords(APIView):
             user_id = request.GET.get("user_id")
             card_id = request.GET.get("card_id")
             request_id = request.GET.get("request_id")
-            # payment_status = request.GET.get("payment_status")
 
             if transaction_id != None or 0:
                 try:
@@ -67,15 +66,6 @@ class PaymentRecords(APIView):
                 else:
                     serializer = AllTransactionRecordSerializer(record_objs, many = True)
                     return onSuccess("No Records found with given request id !!!", serializer.data)
-                
-            # elif payment_status != None:
-            #     record_objs = Transaction.objects.filter(payment_request__payment_status = payment_status, admin = get_admin)
-            #     if record_objs:
-            #         serializer = AllTransactionRecordSerializer(record_objs, many = True)
-            #         return onSuccess("Records with payment status !!!", serializer.data)
-            #     else:
-            #         serializer = AllTransactionRecordSerializer(record_objs, many = True)
-            #         return onSuccess("No Records with payment status !!!", serializer.data)
             else:
                 all_records_objs = Transaction.objects.filter(admin = get_admin, payment_request__payment_status = True)
                 if all_records_objs:
