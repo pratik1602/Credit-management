@@ -16,7 +16,7 @@ class CardDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Card
-        fields = ['card_id','card_bank_name', 'card_category' ,'card_number','card_network','card_holder_name' ,'card_photo','card_exp_date' ,'card_cvv','commission']
+        fields = ['card_id','card_bank_name', 'card_category' ,'card_number','card_network','card_holder_name' ,'frontside_card_photo', 'backside_card_photo','card_exp_date' ,'card_cvv','commission']
 
 class GetPaymentRequestSerializer(serializers.ModelSerializer):
     card = CardDetailSerializer()
