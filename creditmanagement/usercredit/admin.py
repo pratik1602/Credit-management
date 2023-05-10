@@ -89,14 +89,15 @@ class TransactionAdmin(admin.ModelAdmin):
     list_display = ['transaction_id', 'card', 'paid_amount', 'profit_amount', 'total_amount', 'due_paid_at', "payment_method_flag"]
     list_filter = ['admin']
     list_per_page = 10
+    list_editable = ['due_paid_at']
 
     def save_model(self, request, obj, form, change):
 
         if change:
-            obj.profit_amount = obj.amount_paid * obj.commission/100
-            obj.paid_at = datetime.now()
+            obj.profit_amount = obj.paid_amount * obj.profit/100
+            obj.due_paid_at = datetime.now()
         else:                    
-            obj.profit_amount = obj.amount_paid * obj.commission/100
+            obj.profit_amount = obj.paid_amount * obj.profit/100
         obj.save()            
         return super(TransactionAdmin, self).save_model(request, obj, form, change)
 

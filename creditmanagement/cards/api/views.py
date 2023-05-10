@@ -80,7 +80,6 @@ class UserCardAPIView(APIView):
                 else:
                     serializer = UserCardSerializer(card_objs, many=True)
                     return onSuccess("Your Cards !!!", serializer.data)
-                
         else:
             return unauthorisedRequest()
 

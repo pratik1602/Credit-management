@@ -556,6 +556,8 @@ class PaidUnpaidWithdrawView(APIView):
 
 #-------------------------- PROFIT, UNPAID PROFIT, DUE AMOUNT, UNPAID AMOUNT VIEWS ----------------------------#
 
+from django.db.models import Q
+
 class DueProfitUnpaidProfitView(APIView):
     def get(self, request):
         token = get_object(request)
@@ -564,11 +566,23 @@ class DueProfitUnpaidProfitView(APIView):
                 get_admin = User.objects.get(id = token["user_id"], is_admin = True)
             except:
                 return badRequest("Admin not found !!!")
+            # start_date = request.GET.get("start_date")
+            # end_date = request.GET.get("end_date")
+            month = request.GET.get("month")
             payment_status = request.GET.get("payment_status")
             payment_received = request.GET.get("payment_received")
             # payment_method = request.GET.get("payment_method")
-                
-            if payment_status != None:
+
+            if month != None:
+                record_objs = Transaction.objects.filter(due_paid_at__month = month, admin = get_admin)
+                if record_objs:
+                    serializer = ProfitUnpaidProfitDetailsSerializer(record_objs, many = True)
+                    return onSuccess("Records with given month !!!", serializer.data)
+                else:
+                    serializer = ProfitUnpaidProfitDetailsSerializer(record_objs, many = True)
+                    return onSuccess("No Records with given month !!!", serializer.data)
+        
+            elif payment_status != None:
                 record_objs = Transaction.objects.filter(payment_request__payment_status = payment_status, admin = get_admin)
                 if record_objs:
                     serializer = ProfitUnpaidProfitDetailsSerializer(record_objs, many = True)
@@ -576,7 +590,7 @@ class DueProfitUnpaidProfitView(APIView):
                 else:
                     serializer = ProfitUnpaidProfitDetailsSerializer(record_objs, many = True)
                     return onSuccess("No Records with payment status !!!", serializer.data)
-                
+            
             elif payment_received != None:
                 record_objs = Transaction.objects.filter(payment_received = payment_received, admin = get_admin)
                 if record_objs:
