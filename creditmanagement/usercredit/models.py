@@ -91,7 +91,7 @@ class Card(models.Model):
     # CARD_CHOICE = (("business", "BUSINESS"),
     #             ("personal", "PERSONAL"),)
     card_bank_name = models.CharField(max_length=100)
-    card_type = models.CharField(max_length=20)
+    # card_type = models.CharField(max_length=20)
     card_category = models.CharField(max_length=20, blank = True)
     card_network = models.CharField(max_length=50)
     card_number = models.PositiveBigIntegerField( unique=True) #validators=[validate_card_number],
