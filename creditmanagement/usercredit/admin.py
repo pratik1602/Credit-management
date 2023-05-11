@@ -89,7 +89,7 @@ class TransactionAdmin(admin.ModelAdmin):
     list_display = ['transaction_id', 'card', 'paid_amount', 'profit_amount', 'total_amount', 'due_paid_at', "payment_method_flag"]
     list_filter = ['admin']
     list_per_page = 10
-    list_editable = ['due_paid_at']
+    # list_editable = ['due_paid_at']
 
     def save_model(self, request, obj, form, change):
 
