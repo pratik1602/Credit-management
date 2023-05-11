@@ -302,6 +302,8 @@ class UserCard(APIView):
             return unauthorisedRequest()  
 
     def patch(self, request):
+        if not request.POST._mutable:
+            request.POST._mutable = True
         token = get_object(request)
         if token:
             try:
