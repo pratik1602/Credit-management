@@ -525,6 +525,7 @@ class PaidUnpaidWithdrawView(APIView):
                 return badRequest("Admin not found !!!")
             payment_method = request.GET.get("payment_method")
             payment_status = request.GET.get("payment_status")
+            request_id = request.GET.get("request_id")
 
             if payment_status != None:
                 record_objs = Payment_Request.objects.filter(payment_status = payment_status, admin = get_admin)
@@ -534,6 +535,7 @@ class PaidUnpaidWithdrawView(APIView):
                 else:
                     serializer = PaidUnpaidWithdrawSerializer(record_objs, many = True)
                     return onSuccess("No Records with payment status !!!", serializer.data)
+                
             if payment_method != None:
                 record_objs = Payment_Request.objects.filter(payment_method = payment_method, admin = get_admin)
                 if record_objs:
@@ -542,6 +544,15 @@ class PaidUnpaidWithdrawView(APIView):
                 else:
                     serializer = PaidUnpaidWithdrawSerializer(record_objs, many = True)
                     return onSuccess("No Records with payment method !!!", serializer.data)
+                
+            if request_id != None:
+                try:
+                    record_obj = Payment_Request.objects.get(request_id = request_id, admin = get_admin)
+                except:
+                    return badRequest("No Record with request id !!!")
+                serializer = PaidUnpaidWithdrawSerializer(record_obj)
+                return onSuccess("Record with request id !!!", serializer.data)
+
             else:
                 all_records_objs = Payment_Request.objects.filter(admin = get_admin)
                 if all_records_objs:

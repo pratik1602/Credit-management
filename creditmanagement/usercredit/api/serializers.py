@@ -74,10 +74,17 @@ class VerifyPasswoprdOTPSerializer(serializers.Serializer):
     otp  = serializers.CharField()
 
 
-#------------------ USERS LIST (ADMIN ACCESS) ----------------------------#
+#------------------ ALL USERS LIST (ADMIN ACCESS) ----------------------------#
 
 class UserSerializer(serializers.ModelSerializer):
-    
+    # profit_amount =serializers.SerializerMethodField()
+    # @staticmethod
+    # def get_paid_amount(obj):
+    #     amount = Transaction.objects.filter(payment_request = obj.request_id)
+    #     paid_amount = TranactionDetailsSerializer(amount, many= True)
+    #     return paid_amount.data
+
+
     class Meta:
         model = User
         fields = ['id','profile_pic','first_name', 'last_name','email', 'phone_no', 'aadhar', 'pan', 'cheque', 'tc', 'is_verified', 'is_active', 'otp_verified' ]
