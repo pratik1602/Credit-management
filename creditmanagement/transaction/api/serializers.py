@@ -78,7 +78,7 @@ class EditTransactionRecordSerializer(serializers.ModelSerializer):
 class TranactionDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
-        fields = ["paid_amount",  "payment_type"]
+        fields = ["paid_amount",  "payment_type", "payment_method_flag" ]
 
 class PaidUnpaidWithdrawSerializer(serializers.ModelSerializer):
     paid_amount =serializers.SerializerMethodField()
