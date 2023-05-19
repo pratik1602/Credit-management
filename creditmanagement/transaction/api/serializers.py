@@ -62,7 +62,7 @@ class AllTransactionRecordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ["transaction_id","admin","user", "card", "payment_request","due_paid_at", "paid_amount",  "payment_type", "due_paid_through", "deposit_charges", "withdraw_charges", "profit", "profit_amount", "total_amount", "payment_received", 'payment_method_flag']
+        fields = ["transaction_id","admin","user", "card", "payment_request","due_paid_at", "paid_amount",  "payment_type", "due_paid_through", "deposit_charges", "withdraw_charges", "profit", "profit_amount", "withdraw_amount", "total_amount", "payment_received", 'payment_method_flag']
 
 class EditTransactionRecordSerializer(serializers.ModelSerializer):
 
@@ -78,7 +78,7 @@ class EditTransactionRecordSerializer(serializers.ModelSerializer):
 class TranactionDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
-        fields = ["paid_amount",  "payment_type", "payment_method_flag" ]
+        fields = ["paid_amount",  "payment_type", "payment_method_flag","deposit_charges", "withdraw_charges","withdraw_amount", "profit", "profit_amount"  ]
 
 class PaidUnpaidWithdrawSerializer(serializers.ModelSerializer):
     paid_amount =serializers.SerializerMethodField()
@@ -111,5 +111,5 @@ class ProfitUnpaidProfitDetailsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ["card", "payment_request","due_paid_at", "paid_amount",  "payment_type", "due_paid_through", "deposit_charges", "profit", "profit_amount", "payment_received"]
+        fields = ["card", "payment_request","due_paid_at", "paid_amount",  "payment_type", "due_paid_through", "deposit_charges", "profit", "profit_amount", "withdraw_amount", "payment_received"]
 
