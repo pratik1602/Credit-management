@@ -22,7 +22,9 @@ urlpatterns = [
 
     path ('profit-unpaidprofit-view', DueProfitUnpaidProfitView.as_view(), name="DueProfitUnpaidProfitView"),
 
-    
+    #--------------- PDF -----------------------#
+
+    # path ('pdf', Generate_pdf.as_view(), name="Generate_pdf"),
 
 
 

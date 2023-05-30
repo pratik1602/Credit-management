@@ -109,11 +109,18 @@ class UserCardPayemtRecord(APIView):
                                     serializer = UserCardDepositPaymentSerializer(data=data)
                                     if serializer.is_valid():
                                         serializer.save()
+                                        # print("serializer data",serializer.data)
                                         get_transaction_record = Transaction.objects.get(transaction_id = serializer.data["transaction_id"])
                                         get_transaction_record.profit_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) /100 
                                         get_transaction_record.total_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) /100 + float(get_transaction_record.deposit_charges) + float(get_transaction_record.paid_amount)
+                                        # context = {"records": serializer.data}
+                                        # print("context", context)
+                                        # get_transaction_record.pdf = render_to_pdf("pdf_convert/payment_summary.html", context)
+                                        # print("pdf", get_transaction_record.pdf)
                                         get_transaction_record.save()
                                         return onSuccess("Full Payment record added successfully !!!", serializer.data)
+                                    else:
+                                        return badRequest("Something went wrong !!!")
                                 else:
                                     return badRequest("Please enter due paid through !!!")
                             else:
@@ -638,19 +645,111 @@ class DueProfitUnpaidProfitView(APIView):
         else:
             return unauthorisedRequest()
 
+  
+#--------------------------------- PDF CONVERT ----------------------------#
 
-#----------------------------- TOTAL CARDS AND PROFIT AMOUNT ----------------------------#
+# from django.shortcuts import render
+# from transaction.api.helpers import *
 
-# class TotalCardsandProfitAmountView(APIView):
-
-#     def get(self, request):
+# class Generate_pdf(APIView):
+#     def get(self, request, *args, **kwargs):
 #         token = get_object(request)
 #         if token:
 #             try:
 #                 get_admin = User.objects.get(id = token["user_id"], is_admin = True)
 #             except:
 #                 return badRequest("Admin not found !!!")
+#             request_id = request.GET.get("request_id")
             
+#             if request_id != None or 0:
+#                 record_objs = Transaction.objects.filter(payment_request__request_id = request_id, admin = get_admin)
+#                 serializer = AllTransactionRecordSerializer(record_objs, many = True)
+#                 params = {
+#                     'records' : serializer.data
+#                 }
+#                 file_name = render_to_pdf('pdf_convert/payment_summary.html', params)
+#                 # print("pdf", pdf)
+#                 # file_name = pdf + request_id + ".pdf"
+#                 # return onSuccess("here", file_name)
+
+#                 # if not status:
+#                 #     return badRequest("Something went wrong !!!")
+                 
+                
+#                 return onSuccess("Here is your pdf file", f'/media/{file_name}')
+            
+
+#                 # if record_objs:
+#                 #     serializer = AllTransactionRecordSerializer(record_objs, many = True)
+                    
+#                 #     return render(request, 'pdf_convert/payment_summary.html', {'serializer' : serializer.data})
+#                 # else:
+#                 #     serializer = AllTransactionRecordSerializer(record_objs, many = True)
+#                 #     return onSuccess("No Records found with given request id !!!")
+#             else:
+#                 return badRequest("please enter a valid request id !!!")
 #         else:
-#             return unauthorisedRequest() 
+#             return unauthorisedRequest()
         
+
+# class Generate_PDF(APIView):
+#     def post(self, request):
+#         token = get_object(request)
+#         if token:
+#             try:
+#                 get_admin = User.objects.get(id = token["user_id"], is_admin = True)
+#             except:
+#                 return badRequest("Admin not found !!!")
+#             data = request.data
+            
+#             get_records = Transaction.objects.filter(payment_request_request_id = data["request_id"], payment_request_payment_status = True, admin = get_admin)
+#             if get_records.exists():
+#                 serializer = AllTransactionRecordSerializer(get_records, many = True)
+#                 params = {
+#                     'records' : serializer.data
+#                 }
+#                 file_name = render_to_pdf('pdf_convert/payment_summary.html', params)
+#             else:
+#                 return badRequest("No records found !!!")
+#             pdf_serializer = GeneratePdfSerializer(data = data)
+#             if serializer.is_valid():
+#                 render_to_pdf()
+#                 serializer.save()
+#             else:
+#                 return badRequest(serializer.errors)
+
+
+
+
+
+
+
+# from django.http import HttpResponse
+# from django.template.loader import get_template
+# from transaction.api.helpers import *
+
+
+# class Generate_pdf(APIView):
+#     def get(self, request, *args, **kwargs):
+#         token = get_object(request)
+#         if token:
+#             try:
+#                 get_admin = User.objects.get(id = token["user_id"], is_admin = True)
+#             except:
+#                 return badRequest("Admin not found !!!")
+#             request_id = request.GET.get("request_id")
+#             if request_id != None or 0:
+#                 # template = get_template("pdf_convert/payment_summary.html")
+#                 record_objs = Transaction.objects.filter(payment_request__request_id = request_id, admin = get_admin)
+#                 serializer = AllTransactionRecordSerializer(record_objs, many = True)
+#                 print(type(serializer))
+#                 context = {
+#                     'records' : serializer.data
+#                 }
+#                 # html = template.render(context)
+#                 pdf = render_to_pdf("pdf_convert/payment_summary.html", context)
+#                 return pdf
+#             else:
+#                 return badRequest("please enter a valid request id !!!")
+#         else:
+#             return unauthorisedRequest()

@@ -156,6 +156,7 @@ class Transaction(models.Model):
     profit_amount = models.FloatField(null=True,blank=True)
     total_amount = models.FloatField(null=True,blank=True)
     payment_received = models.BooleanField(default=False)
+    pdf = models.FileField(upload_to= "Pdf/UserPdf", default="")
     
     def __str__(self) :
         return self.due_paid_through

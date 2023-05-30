@@ -78,7 +78,7 @@ class EditTransactionRecordSerializer(serializers.ModelSerializer):
 class TranactionDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
-        fields = ["paid_amount",  "payment_type", "payment_method_flag","deposit_charges", "withdraw_charges","withdraw_amount", "profit", "profit_amount"  ]
+        fields = ["paid_amount",  "payment_type", "payment_method_flag","deposit_charges", "withdraw_charges","withdraw_amount", "profit", "profit_amount", "due_paid_at" ]
 
 class PaidUnpaidWithdrawSerializer(serializers.ModelSerializer):
     paid_amount =serializers.SerializerMethodField()
@@ -113,3 +113,11 @@ class ProfitUnpaidProfitDetailsSerializer(serializers.ModelSerializer):
         model = Transaction
         fields = ["card", "payment_request","due_paid_at", "paid_amount",  "payment_type", "due_paid_through", "deposit_charges", "profit", "profit_amount", "withdraw_amount", "payment_received"]
 
+
+
+#-------------------------- GENERATE PDF SERIALIZER ----------------------------#
+
+class GeneratePdfSerializer(serializers.ModelSerializer):
+    class Meta:
+        Model = Transaction
+        fields = ["pdf"]
