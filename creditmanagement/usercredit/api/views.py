@@ -337,11 +337,12 @@ class RegisterUser(APIView):
     def post(self, request):
         if not request.POST._mutable:
             request.POST._mutable = True
+        data = request.data
         try:
             get_admin = User.objects.get(id= data["id"], is_admin = True)
+            print("get admin", get_admin)
         except:
             return badRequest("Admin not found !!!")
-        data = request.data
         if data["first_name"] != "" and data["last_name"] != "" and data["password"] != "" and data["password2"] != "" and data["phone_no"] != "" and data["aadhar"] != "" and data["pan"] != "" and data["cheque"] != "" and data["tc"] != "":
             if len(data['phone_no']) == 10 and re.match("[6-9][0-9]{9}", data['phone_no']):
                 if data['email'] != '' and re.match("^[a-zA-Z0-9-_.]+@[a-zA-Z0-9]+\.[a-z]{1,3}$", data["email"]):
