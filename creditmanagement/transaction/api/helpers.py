@@ -1,11 +1,32 @@
-# import uuid
-# from django.conf import settings
-# from django.shortcuts import render
-# from io import BytesIO
-# from django.http import HttpResponse
-# from django.template.loader import get_template
-# from xhtml2pdf import pisa
-# from django.template.loader import render_to_string
+import uuid
+from django.conf import settings
+from django.shortcuts import render
+from io import BytesIO
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+from django.template.loader import render_to_string
+
+
+
+def render_to_pdf(template_src, context_dict={}):
+    # template = get_template(template_src)
+    # html  = template.render(context_dict)
+    html = render_to_string(template_src, context_dict)
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return None
+
+
+
+
+
+
+
+
 
 # def render_to_pdf(template_src, context_dict={}):
 #     # template = get_template(template_src)
@@ -13,17 +34,16 @@
 #     html = render_to_string(template_src, context_dict)
 #     result = BytesIO()
 #     pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
-#     file_name = uuid.uuid4()
 
-#     try:
-#         with open(str(settings.BASE_DIR) + f'/static/{file_name}.pdf', 'wb+') as output:
-#             pdf = pisa.pisaDocument(BytesIO(html.encode('UTF-8')), output)
-#     except Exception as e:
-#         print(e)
+#     # file_name = uuid.uuid4()
+#     # try:
+#     #     with open(str(settings.BASE_DIR) + f'/static/{file_name}.pdf', 'wb+') as output:
+#     #         pdf = pisa.pisaDocument(BytesIO(html.encode('UTF-8')), output)
+#     # except Exception as e:
+#     #     print(e)
 
-#     if pdf.error:
+#     if pdf.err:
 #         return '', False
-    
 #     return file_name
 
 

@@ -24,7 +24,7 @@ urlpatterns = [
 
     #--------------- PDF -----------------------#
 
-    # path ('pdf', Generate_pdf.as_view(), name="Generate_pdf"),
+    path ('pdf', Generate_pdf.as_view(), name="Generate_pdf"),
 
 
 

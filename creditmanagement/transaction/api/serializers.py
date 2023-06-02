@@ -36,7 +36,7 @@ class UserCardCycleandWithdrawPaymentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ["transaction_id","admin","card", "user", "payment_request", "paid_amount", "payment_type", "due_paid_through", "deposit_charges", "profit", "withdraw_charges", "payment_method_flag"] 
+        fields = ["transaction_id","admin","card", "user", "payment_request", "paid_amount", "payment_type", "due_paid_through", "deposit_charges", "profit", "withdraw_charges", "payment_method_flag", "pdf"] 
 
 
 class CardDetailsSerializer(serializers.ModelSerializer):
@@ -62,7 +62,7 @@ class AllTransactionRecordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ["transaction_id","admin","user", "card", "payment_request","due_paid_at", "paid_amount",  "payment_type", "due_paid_through", "deposit_charges", "withdraw_charges", "profit", "profit_amount", "withdraw_amount", "total_amount", "payment_received", 'payment_method_flag']
+        fields = ["transaction_id","admin","user", "card", "payment_request","due_paid_at", "paid_amount",  "payment_type", "due_paid_through", "deposit_charges", "withdraw_charges", "profit", "profit_amount", "withdraw_amount", "total_amount", "payment_received", 'payment_method_flag', 'pdf']
 
 class EditTransactionRecordSerializer(serializers.ModelSerializer):
 
