@@ -57,30 +57,18 @@
                                         <td class="text-right"><strong>Total Paid Amount</strong></td>
                                     </tr>
                                 </thead>
-                                {% for record in records %}
+                                
                                 <tbody>
                                     <!-- foreach ($order->lineItems as $line) or some such thing here -->
+                                    {% for record in records %}
                                     <tr>
                                         <td>{{record.transaction_id}}</td>
-                                        <td class="text-center">$10.99</td>
-                                        <td class="text-center">20-01-2023</td>
-                                        <td class="text-center">1</td>
-                                        <td class="text-right">$10.99</td>
+                                        <td class="text-center">{{record.due_paid_through}}</td>
+                                        <td class="text-center">{{record.due_paid_at}}</td>
+                                        <td class="text-center">{{record.deposit_charges}}</td>
+                                        <td class="text-right">{{record.total_amount}}</td>
                                     </tr>
-                                    <tr>
-                                        <td>BS-400</td>
-                                        <td class="text-center">$20.00</td>
-                                        <td class="text-center">20-01-2023</td>
-                                        <td class="text-center">3</td>
-                                        <td class="text-right">$60.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>BS-1000</td>
-                                        <td class="text-center">$600.00</td>
-                                        <td class="text-center">20-01-2023</td>
-                                        <td class="text-center">1</td>
-                                        <td class="text-right">$600.00</td>
-                                    </tr>
+                                    {% endfor %}
                                     <tr>
                                         <td class="thick-line"></td>
                                         <td class="thick-line"></td>
@@ -103,7 +91,7 @@
                                         <td class="no-line text-right">$685.99</td>
                                     </tr>
                                 </tbody>
-                                {% endfor %}
+                                
                             </table>
                         </div>
                     </div>
