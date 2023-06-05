@@ -677,7 +677,7 @@ class DueProfitUnpaidProfitView(APIView):
 from django.http import HttpResponse
 from django.template.loader import get_template
 from transaction.api.helpers import *
-
+from datetime import date
 
 class Generate_pdf(APIView):
     def get(self, request, *args, **kwargs):
@@ -693,19 +693,24 @@ class Generate_pdf(APIView):
             except:
                 return badRequest("No records found with given request id !!!")
             serializer = AllTransactionRecordSerializer(record_objs, many = True)
-            print(type(serializer))
+            today = date.today()
             context = {
-                'records' : serializer.data
+                'records' : serializer.data,
+                'admin_name' : get_admin.first_name + " " + get_admin.last_name,
+                'admin_email' : get_admin.email,
+                'admin_mobile' : get_admin.phone_no,
+                'today_date' : today.strftime("%B %d, %Y")
             }
             pdf = render_to_pdf("pdf_convert/payment_summary.html", context)
+            print("view")
             if pdf:
                 response = HttpResponse(pdf, content_type='application/pdf')
-                filename = "Invoice_%s.pdf" %("example")
-                content = "inline; filename='%s'" %(filename)
-                download = request.GET.get("download")
-                if download:
-                    content = "attachment; filename='%s'" %(filename)
-                response['Content-Disposition'] = content
+                # filename = "Invoice_%s.pdf" %("example")
+                # content = "inline; filename='%s'" %(filename)
+                # download = request.GET.get("download")
+                # if download:
+                #     content = "attachment; filename='%s'" %(filename)
+                # response['Content-Disposition'] = content
                 return response
             return HttpResponse("Not found")
         else:

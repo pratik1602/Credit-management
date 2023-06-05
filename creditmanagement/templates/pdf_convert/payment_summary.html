@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Payment Summary</title>
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <link href="payment_summary.css" rel="stylesheet">
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
@@ -15,24 +15,25 @@
         <div class="row">
             <div class="col-xs-12">
                 <div class="invoice-title">
-                    <h2>Invoice</h2><h3 class="pull-right">Invoice Date: <br> March 7, 2014</h3>
+                    <h2 style="font-size:25px; text-align: center; padding-bottom: -15px">INVOICE</h2><h3 style="text-align: right; padding-top: -5px;">Invoice Date: <br>{{today_date}}</h3>
                 </div>
                 <hr>
                 <div class="row">
                     <div class="col-xs-6">
                         <address>
-                        <strong>Billed To:</strong><br>
+                        <strong>Billed To:</strong><br><br>
                             John Smith<br>
                             1234 Main<br>
                             Apt. 4B<br>
                             Springfield, ST 54321
                         </address>
                     </div>
-                    <div class="col-xs-6 text-right">
+                    <div class="col-xs-6" style="text-align: right;">
                         <address>
-                            <strong>Payment Method:</strong><br>
-                            Visa ending **** 4242<br>
-                            jsmith@email.com
+                            <strong>Payment From:</strong><br><br>
+                            {{admin_name}}<br>
+                            {{admin_mobile}}<br>
+                            {{admin_email}}
                         </address>
                     </div>
                 </div>
@@ -43,7 +44,7 @@
             <div class="col-md-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title"><strong>Payment summary</strong></h3>
+                        <h3 style="text-align:center; font-size: 15px;"><strong>Payment Summary</strong></h3>
                     </div>
                     <div class="panel-body">
                         <div class="table-responsive">
@@ -51,44 +52,44 @@
                                 <thead>
                                     <tr>
                                         <td><strong>Transaction Id</strong></td>
-                                        <td class="text-center"><strong>Paid Through</strong></td>
+                                        <td style="text-align: center;"><strong>Paid Through</strong></td>
                                         <td class="text-center"><strong>Paid At</strong></td>
-                                        <td class="text-center"><strong>Charges</strong></td>
-                                        <td class="text-right"><strong>Total Paid Amount</strong></td>
+                                        <td style="text-align: center;"><strong>Charges</strong></td>
+                                        <td style="text-align: right;"><strong>Total Paid Amount</strong></td>
                                     </tr>
                                 </thead>
                                 
                                 <tbody>
                                     <!-- foreach ($order->lineItems as $line) or some such thing here -->
                                     {% for record in records %}
-                                    <tr>
-                                        <td>{{record.transaction_id}}</td>
-                                        <td class="text-center">{{record.due_paid_through}}</td>
-                                        <td class="text-center">{{record.due_paid_at}}</td>
-                                        <td class="text-center">{{record.deposit_charges}}</td>
-                                        <td class="text-right">{{record.total_amount}}</td>
+                                    <tr style="padding-top: 5px;">
+                                        <td style="font-size: 70%;">{{record.transaction_id}}</td>
+                                        <td style="text-align: center;">{{record.due_paid_through}}</td>
+                                        <td style= "margin-right: 20px;">{{record.due_paid_at}}</td>
+                                        <td style="text-align: center;">{{record.deposit_charges}}</td>
+                                        <td style="text-align: right;">{{record.total_amount}}</td>
                                     </tr>
                                     {% endfor %}
-                                    <tr>
+                                    <tr style="padding-top: 10px;">
+                                        <td ></td>
                                         <td class="thick-line"></td>
                                         <td class="thick-line"></td>
-                                        <td class="thick-line"></td>
-                                        <td class="thick-line text-center"><strong>Subtotal</strong></td>
-                                        <td class="thick-line text-right">$670.99</td>
+                                        <td style="text-align: right;"><strong>Subtotal</strong></td>
+                                        <td style="text-align: right;">$670.99</td>
                                     </tr>
-                                    <tr>
+                                    <tr style="padding-top: 5px;">
                                         <td class="no-line"></td>
                                         <td class="no-line"></td>
                                         <td class="no-line"></td>
-                                        <td class="no-line text-center"><strong>Shipping</strong></td>
-                                        <td class="no-line text-right">$15</td>
+                                        <td style="text-align: right;"><strong>Shipping</strong></td>
+                                        <td style="text-align: right;">$15</td>
                                     </tr>
-                                    <tr>
+                                    <tr style="padding-top: 5px;">
                                         <td class="no-line"></td>
                                         <td class="no-line"></td>
                                         <td class="no-line"></td>
-                                        <td class="no-line text-center"><strong>Total</strong></td>
-                                        <td class="no-line text-right">$685.99</td>
+                                        <td style="text-align: right;"><strong>Total</strong></td>
+                                        <td style="text-align: right;">$685.99</td>
                                     </tr>
                                 </tbody>
                                 
