@@ -701,7 +701,8 @@ class Generate_pdf(APIView):
             paid_date = []
             tran_id = []
             charges_sum = []
-            # total_charge = 0
+            total_charge = 0
+            total_payable_amount = 0
             for i in range(len(serializer.data)):
                 due_paid_at = serializer.data[i]["due_paid_at"]
                 transaction_id = serializer.data[i]["transaction_id"]
@@ -714,8 +715,8 @@ class Generate_pdf(APIView):
                 serializer.data[i]["due_paid_at"] = stripped_date
                 serializer.data[i]["transaction_id"] = stripped_tran_id
                 serializer.data[i]["charge_sum"] = charge_sum
-                # total_charge = total_charge + charge_sum
-                # print(total_charge)
+                total_charge = charge_sum + total_charge
+                total_payable_amount = float(serializer.data[i]["total_amount"]) + total_payable_amount
             today = date.today()
             context = {
                 'records' : serializer.data,
@@ -726,7 +727,11 @@ class Generate_pdf(APIView):
                 'user_name' : get_request.user.first_name + " " + get_request.user.last_name,
                 'user_email' : get_request.user.email,
                 'user_mobile' : get_request.user.phone_no,
-                'payment_method': get_request.payment_method
+                'payment_method': get_request.payment_method,
+                'total_charge': total_charge,
+                'total_payable_amount': total_payable_amount
+
+
             }
             pdf = render_to_pdf("pdf_convert/payment_summary.html", context)
             if pdf:

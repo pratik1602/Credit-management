@@ -82,7 +82,7 @@
                                 <td style="text-align: right; ">{{record.total_amount}}</td>
                             </tr>
                             {% endfor %}
-                            <tr style="padding-top: 10px;">
+                            <!-- <tr style="padding-top: 10px;">
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -90,15 +90,15 @@
                                 <td></td>
                                 <td style="text-align: right;"><strong>Subtotal</strong></td>
                                 <td style="text-align: right;">670.99</td>
-                            </tr>
+                            </tr> -->
                             <tr style="padding-top: 5px;">
                                 <td ></td>
                                 <td ></td>
                                 <td ></td>
                                 <td ></td>
                                 <td ></td>
-                                <td style="text-align: right;"><strong>Total Paid Charges</strong></td>
-                                <td style="text-align: right;">15</td>
+                                <td style="text-align: right;"><strong>Total Charges</strong></td>
+                                <td style="text-align: right;">{{total_charge}}</td>
                             </tr>
                             <tr style="padding-top: 5px; ">
                                 <td ></td>
@@ -107,7 +107,7 @@
                                 <td ></td>
                                 <td ></td>
                                 <td style="text-align: right;"><strong>Total Payable Amount</strong></td>
-                                <td style="text-align: right;">685.99</td>
+                                <td style="text-align: right;">{{total_payable_amount}}</td>
                             </tr>
                         </tbody>                                
                     </table>
