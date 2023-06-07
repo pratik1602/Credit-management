@@ -703,6 +703,7 @@ class Generate_pdf(APIView):
             charges_sum = []
             total_charge = 0
             total_payable_amount = 0
+            deposit_amount = 0
             for i in range(len(serializer.data)):
                 due_paid_at = serializer.data[i]["due_paid_at"]
                 transaction_id = serializer.data[i]["transaction_id"]
@@ -716,7 +717,9 @@ class Generate_pdf(APIView):
                 serializer.data[i]["transaction_id"] = stripped_tran_id
                 serializer.data[i]["charge_sum"] = charge_sum
                 total_charge = charge_sum + total_charge
-                total_payable_amount = float(serializer.data[i]["total_amount"]) + total_payable_amount
+                if serializer.data[i]["payment_method_flag"] == "Cycle Deposit":
+                    deposit_amount = serializer.data[i]["paid_amount"]  + deposit_amount
+            total_payable_amount = total_payable_amount + deposit_amount + total_charge
             today = date.today()
             context = {
                 'records' : serializer.data,
