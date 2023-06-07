@@ -11,94 +11,110 @@
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="invoice-title">
-                    <h2 style="font-size:25px; text-align: center; padding-bottom: -15px">INVOICE</h2><h3 style="text-align: right; padding-top: -5px;">Invoice Date: <br>{{today_date}}</h3>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="col-xs-6">
-                        <address>
-                        <strong>Billed To:</strong><br><br>
-                            John Smith<br>
-                            1234 Main<br>
-                            Apt. 4B<br>
-                            Springfield, ST 54321
-                        </address>
-                    </div>
-                    <div class="col-xs-6" style="text-align: right;">
-                        <address>
-                            <strong>Payment From:</strong><br><br>
-                            {{admin_name}}<br>
-                            {{admin_mobile}}<br>
-                            {{admin_email}}
-                        </address>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="row">
-            <div class="col-md-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 style="text-align:center; font-size: 15px;"><strong>Payment Summary</strong></h3>
-                    </div>
-                    <div class="panel-body">
-                        <div class="table-responsive">
-                            <table class="table table-condensed">
-                                <thead>
-                                    <tr>
-                                        <td><strong>Transaction Id</strong></td>
-                                        <td style="text-align: center;"><strong>Paid Through</strong></td>
-                                        <td class="text-center"><strong>Paid At</strong></td>
-                                        <td style="text-align: center;"><strong>Charges</strong></td>
-                                        <td style="text-align: right;"><strong>Total Paid Amount</strong></td>
-                                    </tr>
-                                </thead>
-                                
-                                <tbody>
-                                    <!-- foreach ($order->lineItems as $line) or some such thing here -->
-                                    {% for record in records %}
-                                    <tr style="padding-top: 5px;">
-                                        <td style="font-size: 70%;">{{record.transaction_id}}</td>
-                                        <td style="text-align: center;">{{record.due_paid_through}}</td>
-                                        <td style= "margin-right: 20px;">{{record.due_paid_at}}</td>
-                                        <td style="text-align: center;">{{record.deposit_charges}}</td>
-                                        <td style="text-align: right;">{{record.total_amount}}</td>
-                                    </tr>
-                                    {% endfor %}
-                                    <tr style="padding-top: 10px;">
-                                        <td ></td>
-                                        <td class="thick-line"></td>
-                                        <td class="thick-line"></td>
-                                        <td style="text-align: right;"><strong>Subtotal</strong></td>
-                                        <td style="text-align: right;">$670.99</td>
-                                    </tr>
-                                    <tr style="padding-top: 5px;">
-                                        <td class="no-line"></td>
-                                        <td class="no-line"></td>
-                                        <td class="no-line"></td>
-                                        <td style="text-align: right;"><strong>Shipping</strong></td>
-                                        <td style="text-align: right;">$15</td>
-                                    </tr>
-                                    <tr style="padding-top: 5px;">
-                                        <td class="no-line"></td>
-                                        <td class="no-line"></td>
-                                        <td class="no-line"></td>
-                                        <td style="text-align: right;"><strong>Total</strong></td>
-                                        <td style="text-align: right;">$685.99</td>
-                                    </tr>
-                                </tbody>
-                                
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div style="width: 100%; overflow-x: auto;">
+        <table style="width: 100%;">
+            <tr class="invoice-title" style="padding-bottom: 30px;">
+                <td>
+                    <h2 style="font-size:25px; text-align: center; padding-bottom: -15px">INVOICE</h2>
+                </td>
+            </tr>
+            <tr style="border-bottom: 0.5px solid #000">
+                <td>
+                    <h3 style="text-align: right; padding-bottom: 2px;">Invoice Date: <span>{{today_date}}</span></h3>
+                </td>
+            </tr>            
+            <tr style="padding: 5px 0;">
+                <td>
+                    <table>
+                        <tr>
+                            <td style="text-align: left; padding-top: 10px;">
+                                <address>
+                                    <strong>Billed To:</strong><br><br>
+                                    {{user_name}}<br>
+                                    {{user_mobile}}<br>
+                                    {{user_email}}
+                                </address>
+                            </td>
+                            <td style="text-align: right;">
+                                <address>
+                                    <strong>Payment From:</strong><br><br>
+                                    {{admin_name}}<br>
+                                    {{admin_mobile}}<br>
+                                    {{admin_email}}
+                                </address>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr class="panel-heading" style="padding-top: 5px; padding-bottom: 5px;">
+                <td>
+                    <h2 style="text-align:center; font-size: 16px"><strong>Payment Summary</strong></h2><br>
+                    <h1 style="text-align:left; font-size: 10px; border-bottom: 0.5px solid #000"><strong>Payment Method :</strong><span> {{payment_method}}</span></h2>
+                </td>
+            </tr>
+            <!-- <div class="panel-body"> -->
+            <tr class="table-responsive">
+                <td style="padding-top: 3px;">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr style="padding-bottom: 2px;">
+                                <td><strong>Transaction Id</strong></td>
+                                <td style="text-align: left;"><strong>Paid Through</strong></td>
+                                <td style="text-align: left;"><strong>Paid At</strong></td>
+                                <td style="text-align: left;"><strong>Method</strong></td>
+                                <td style="text-align: left;"><strong>Payment Amount</strong></td>
+                                <td style="text-align: center;"><strong>W/D Charges</strong></td>
+                                <td style="text-align: right;"><strong>Total Paid Amount</strong></td>
+                            </tr>
+                        </thead>
+                        
+                        <tbody>
+                            <!-- foreach ($order->lineItems as $line) or some such thing here -->
+                            {% for record in records %}
+                            <tr style="padding-top: 5px;">
+                                <td style="font-size: 100%;">**********{{record.transaction_id}}</td>
+                                <td style="text-align: left; ">{{record.due_paid_through}}</td>
+                                <td style= "margin-right: 10px;">{{record.due_paid_at}}</td>
+                                <td style= "margin-right: 10px;">{{record.payment_method_flag}}</td>
+                                <td style= "margin-right: 10px;">{{record.paid_amount}}</td>
+                                <td style="text-align: center;">{{record.charge_sum}}</td>
+                                <td style="text-align: right; ">{{record.total_amount}}</td>
+                            </tr>
+                            {% endfor %}
+                            <tr style="padding-top: 10px;">
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td style="text-align: right;"><strong>Subtotal</strong></td>
+                                <td style="text-align: right;">670.99</td>
+                            </tr>
+                            <tr style="padding-top: 5px;">
+                                <td ></td>
+                                <td ></td>
+                                <td ></td>
+                                <td ></td>
+                                <td ></td>
+                                <td style="text-align: right;"><strong>Total Paid Charges</strong></td>
+                                <td style="text-align: right;">15</td>
+                            </tr>
+                            <tr style="padding-top: 5px; ">
+                                <td ></td>
+                                <td ></td>
+                                <td ></td>
+                                <td ></td>
+                                <td ></td>
+                                <td style="text-align: right;"><strong>Total Payable Amount</strong></td>
+                                <td style="text-align: right;">685.99</td>
+                            </tr>
+                        </tbody>                                
+                    </table>
+                </td>
+            </tr>
+            <!-- </div> -->
+        </table>
     </div>
 </body>
 </html>

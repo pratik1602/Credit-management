@@ -108,7 +108,7 @@ admin.site.register(Transaction, TransactionAdmin)
 
 class PaymentRequestAdmin(admin.ModelAdmin):
     list_display = ['request_id', 'user', 'card', 'payment_method', 'cycle_deposit_status','cycle_withdraw_status', 'payment_status', 'due_amount', 'requested_by']
-    list_filter = ['card']
+    list_filter = ['user', 'admin']
     list_per_page = 10
 
     # def save_model(self, request, obj, form, change):

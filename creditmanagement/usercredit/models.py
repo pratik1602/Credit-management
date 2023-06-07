@@ -149,14 +149,14 @@ class Transaction(models.Model):
     payment_type = models.CharField(max_length=30)
     deposit_charges = models.FloatField(default=0, blank=True, null=True)
     withdraw_charges = models.FloatField(default=0, blank=True, null=True)
-    withdraw_amount = models.FloatField(null=True,blank=True)
+    withdraw_amount = models.FloatField(default=0, null=True,blank=True)
     payment_method_flag = models.CharField(max_length=25, blank= True, null= True)
     # commission = models.FloatField(validators=percentage_validators, blank=True, null=True, default=0, editable=True)
     profit = models.FloatField(validators=percentage_validators, blank=True, null=True, default=0, editable=True)
-    profit_amount = models.FloatField(null=True,blank=True)
-    total_amount = models.FloatField(null=True,blank=True)
+    profit_amount = models.FloatField(default=0, null=True,blank=True)
+    total_amount = models.FloatField(default=0, null=True,blank=True)
     payment_received = models.BooleanField(default=False)
-    pdf = models.FileField(upload_to= "Pdf/UserPdf", default="")
+    # pdf = models.FileField(upload_to= "Pdf/UserPdf", default="")
     
     def __str__(self) :
         return self.due_paid_through
