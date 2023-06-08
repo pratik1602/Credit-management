@@ -730,6 +730,8 @@ class Generate_pdf(APIView):
                 'user_name' : get_request.user.first_name + " " + get_request.user.last_name,
                 'user_email' : get_request.user.email,
                 'user_mobile' : get_request.user.phone_no,
+                'user_card_number' : get_request.card.card_number,
+                'user_bank_name' : get_request.card.card_bank_name,
                 'payment_method': get_request.payment_method,
                 'total_charge': total_charge,
                 'total_payable_amount': total_payable_amount

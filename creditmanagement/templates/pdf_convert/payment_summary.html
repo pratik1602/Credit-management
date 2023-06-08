@@ -32,15 +32,17 @@
                                     <strong>Billed To:</strong><br><br>
                                     {{user_name}}<br>
                                     {{user_mobile}}<br>
-                                    {{user_email}}
+                                    {{user_email}}<br>
+                                    <b>Card Number:</b> {{user_card_number}}<br>
+                                    <b>Bank:</b> {{user_bank_name}}
                                 </address>
                             </td>
                             <td style="text-align: right;">
                                 <address>
                                     <strong>Payment From:</strong><br><br>
                                     {{admin_name}}<br>
-                                    {{admin_mobile}}<br>
-                                    {{admin_email}}
+                                    <b>Contact No:</b> {{admin_mobile}}<br>
+                                    <b>Email:</b> {{admin_email}}
                                 </address>
                             </td>
                         </tr>
@@ -49,8 +51,8 @@
             </tr>
             <tr class="panel-heading" style="padding-top: 5px; padding-bottom: 5px;">
                 <td>
-                    <h2 style="text-align:center; font-size: 16px"><strong>Payment Summary</strong></h2><br>
-                    <h1 style="text-align:left; font-size: 10px; border-bottom: 0.5px solid #000"><strong>Payment Method :</strong><span> {{payment_method}}</span></h2>
+                    <h3 style="text-align:center; font-size: 15px;"><strong>Payment Summary</strong></h3>
+                    <b>Payment Method :</b> {{payment_method}}
                 </td>
             </tr>
             <!-- <div class="panel-body"> -->
