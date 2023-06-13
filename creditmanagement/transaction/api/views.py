@@ -1,16 +1,19 @@
 from usercredit.models import *
-from rest_framework.response import Response
 from transaction.api.serializers import *
 from core.emails import *
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAdminUser
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import authentication_classes, permission_classes
+# from rest_framework.permissions import IsAdminUser
+# from rest_framework.permissions import IsAuthenticated
+# from rest_framework.decorators import authentication_classes, permission_classes
 from core.decode import get_object
 from usercredit.utils import *
 from core.response import *
-from datetime import datetime
-from django.contrib.auth.hashers import check_password
+# from datetime import datetime
+# from django.contrib.auth.hashers import check_password
+from django.http import HttpResponse
+# from django.template.loader import get_template
+from transaction.api.helpers import *
+from datetime import date
 
 
 #------------- GET, UPDATE AND DELETE PAYMENT RECORDS (ADMIN ACCESS) ------------#
@@ -319,7 +322,7 @@ class UserCardPayemtRecord(APIView):
                                     all_paid_sum = float(paid_sum) + float(data["paid_amount"])
                                     # if float(all_paid_sum) > float(due_amount):
                                     #     return badRequest("Sum amount is not matching !!!")
-                                    if float(all_paid_sum) >= float(due_amount):
+                                    if float(all_paid_sum) >= float(due_amount):    
                                         data["card"] = get_request_obj.card.card_id
                                         data["user"] = get_request_obj.card.user_id.id
                                         data["payment_request"] = get_request_obj.request_id
@@ -641,43 +644,7 @@ class DueProfitUnpaidProfitView(APIView):
             return unauthorisedRequest()
 
   
-#--------------------------------- PDF CONVERT ----------------------------#
-
-# from django.shortcuts import render
-# from transaction.api.helpers import *
-
-# class Generate_pdf(APIView):
-#     def get(self, request, *args, **kwargs):
-#         token = get_object(request)
-#         if token:
-#             try:
-#                 get_admin = User.objects.get(id = token["user_id"], is_admin = True)
-#             except:
-#                 return badRequest("Admin not found !!!")
-#             request_id = request.GET.get("request_id")
-            
-#             if request_id != None or 0:
-#                 record_objs = Transaction.objects.filter(payment_request__request_id = request_id, admin = get_admin)
-#                 serializer = AllTransactionRecordSerializer(record_objs, many = True)
-#                 params = {
-#                     'records' : serializer.data
-#                 }
-#                 file_name = render_to_pdf('pdf_convert/payment_summary.html', params)
-                
-#                 print("file name", file_name)   
-#                 return onSuccess("Here is your pdf file", f'/static/{file_name}.pdf')
-#             else:
-#                 return badRequest("please enter a valid request id !!!")
-#         else:
-#             return unauthorisedRequest()
-        
-
-
-
-from django.http import HttpResponse
-from django.template.loader import get_template
-from transaction.api.helpers import *
-from datetime import date
+#--------------------------------- GENERATE PDF ----------------------------#
 
 class Generate_pdf(APIView):
     def get(self, request, *args, **kwargs):
@@ -735,8 +702,6 @@ class Generate_pdf(APIView):
                 'payment_method': get_request.payment_method,
                 'total_charge': total_charge,
                 'total_payable_amount': total_payable_amount
-
-
             }
             pdf = render_to_pdf("pdf_convert/payment_summary.html", context)
             if pdf:
