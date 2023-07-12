@@ -105,8 +105,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
 #-------------- EDIT USER PROFILE SERIALIZER (ADMIN ACCESS) ----------------------#
  
 class editUserProfileSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(read_only = True)
-    phone_no = serializers.CharField(read_only = True)
+    # email = serializers.EmailField(read_only = True)
+    # phone_no = serializers.CharField(read_only = True)
 
     class Meta:
         model = User
