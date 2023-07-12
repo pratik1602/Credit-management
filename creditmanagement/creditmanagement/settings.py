@@ -58,7 +58,6 @@ CORS_ALLOW_ALL_ORIGINS = True
 # Application definition
 
 INSTALLED_APPS = [
-    # 'channels',
     "admin_interface",
     "colorfield",
     'django.contrib.admin',
@@ -114,7 +113,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'creditmanagement.wsgi.application' 
-# ASGI_APPLICATION = 'creditmanagement.asgi.application'
 
 REST_FRAMEWORK = {
     # 'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -292,12 +290,3 @@ CLOUDINARY_STORAGE = {
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [('127.0.0.1', 6379)],
-        },
-    },
-}
