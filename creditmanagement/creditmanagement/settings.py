@@ -58,7 +58,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 # Application definition
 
 INSTALLED_APPS = [
-    'channels',
+    # 'channels',
     "admin_interface",
     "colorfield",
     'django.contrib.admin',
