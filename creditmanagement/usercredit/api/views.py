@@ -18,9 +18,9 @@ from django.db.models import Q
 import re
 # from .task import *
 # from django.http import HttpResponse
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
-from django.core.serializers import serialize 
+# from channels.layers import get_channel_layer
+# from asgiref.sync import async_to_sync
+# from django.core.serializers import serialize 
 import json  
 
 #-------------- GETTING TOKENS FOR USER --------------------#
@@ -37,18 +37,18 @@ def create_notification_object(admin, user,description , is_seen = False):
 
 #------------- SEND DATA TO CONSUMER -----------------------#
 
-def send_notification_data_to_consumer(group_name,notification_data):
-    print("hello function")
-    print("queryset", notification_data)
-    print("type of queryset data from function", type(notification_data))
-    channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(
-        str(group_name),  # Group name to send the data to
-        {
-            'type': 'send_queryset_data',  # Consumer method  to handle the data
-            'data': json.dumps(notification_data),  # The queryset data you want to send
-        }
-    )
+# def send_notification_data_to_consumer(group_name,notification_data):
+#     print("hello function")
+#     print("queryset", notification_data)
+#     print("type of queryset data from function", type(notification_data))
+#     channel_layer = get_channel_layer()
+#     async_to_sync(channel_layer.group_send)(
+#         str(group_name),  # Group name to send the data to
+#         {
+#             'type': 'send_queryset_data',  # Consumer method  to handle the data
+#             'data': json.dumps(notification_data),  # The queryset data you want to send
+#         }
+#     )
 
 
 #--------------- USERS LIST (ADMIN ACCESS) ------------------#
@@ -445,32 +445,32 @@ class VerifyUserOTP(APIView):
                     user.save()
 
                     # notification_obj = create_notification_object(admin=user.under_by, user = user, description = "New User Registered Successfully...!!!")
-                    data = {
-                        "admin" : user.under_by.id,
-                        "user": user.id,
-                        "description" : "New User Registered Successfully...!!!",
-                        "is_seen" : False
-                    }
-                    serializer = NotificationSerializer(data=data)
-                    if serializer.is_valid():
-                        serializer.save()
-                    else:
-                        return Response(serializer.errors)
+                    # data = {
+                    #     "admin" : user.under_by.id,
+                    #     "user": user.id,
+                    #     "description" : "New User Registered Successfully...!!!",
+                    #     "is_seen" : False
+                    # }
+                    # serializer = NotificationSerializer(data=data)
+                    # if serializer.is_valid():
+                    #     serializer.save()
+                    # else:
+                    #     return Response(serializer.errors)
                     
-                    print("serializer data", serializer.data)
-                    print("type of data", type(serializer))
-                    # string_data = ""
+                    # print("serializer data", serializer.data)
+                    # print("type of data", type(serializer))
+                    # # string_data = ""
                     
-                    for key, value in serializer.data.items():
-                        if type(value) != str:
-                            value = str(value)
+                    # for key, value in serializer.data.items():
+                    #     if type(value) != str:
+                    #         value = str(value)
                 
                         # string_data += f"{key}: {value}"
                     # serialized_data = json.dumps(new_dict)
                     # print()
                     # print("type of return", type(serialized_data))
                     
-                    group_name = str(user.under_by)
+                    # group_name = str(user.under_by)
                     # send_notification_data_to_consumer(group_name, )
                     # Notifications.objects.create(admin = user.under_by, user = user, description = f"New user registered successfully....{user.first_name}  {user.last_name}, and user id is {user.id}", is_seen= False)
                     return onSuccess("OTP Verified Successfully !!!", 1)
