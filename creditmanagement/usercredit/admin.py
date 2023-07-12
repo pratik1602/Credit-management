@@ -122,3 +122,22 @@ class PaymentRequestAdmin(admin.ModelAdmin):
         # return super(TransactionAdmin, self).save_model(request, obj, form, change)
 
 admin.site.register(Payment_Request, PaymentRequestAdmin)
+
+
+
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ['notification_id', 'notification_created_at', 'is_seen']
+    # list_filter = []
+    list_per_page = 10
+
+    # def save_model(self, request, obj, form, change):
+
+        # if change:
+        #     obj.profit_amount = obj.amount_paid * obj.commission/100
+        #     obj.paid_at = datetime.now()
+        # else:                    
+        #     obj.profit_amount = obj.amount_paid * obj.commission/100
+        # obj.save()            
+        # return super(TransactionAdmin, self).save_model(request, obj, form, change)
+
+admin.site.register(Notifications, NotificationAdmin)

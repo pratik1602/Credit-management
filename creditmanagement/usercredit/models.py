@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from django.db import models
 from django.contrib.auth.models import  AbstractBaseUser
 from core.cardValidate import *
@@ -161,5 +162,26 @@ class Transaction(models.Model):
     def __str__(self) :
         return self.due_paid_through
 
+#--------------------------------- NOTIFICATIONS MODEL ---------------------------#
 
+# import json
+# from asgiref.sync import async_to_sync
 
+class Notifications(models.Model):
+    notification_id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
+    admin = models.ForeignKey(User, on_delete=models.CASCADE,null=True, related_name="notification_admin_id")
+    user = models.ForeignKey(User, on_delete=models.CASCADE,null=True, related_name="notification_user_id")
+    # card = models.ForeignKey(Card, on_delete=models.SET_NULL, null=True, related_name="user_card_id")
+    payment_request = models.ForeignKey(Payment_Request, on_delete=models.SET_NULL, null=True, related_name="notification_payment_request_id")
+    description = models.CharField(max_length=255)
+    notification_created_at = models.DateTimeField(default= datetime.now)
+    is_seen = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.notification_id)
+    # def save(self, *args, **kwargs):
+    #     Notification_objs = Notifications.objects.filter(is_seen = False).count()
+    #     data = {'count': Notification_objs, 'current_notification':self.description}
+
+    #     async_to_sync(self.sen)
+    #     return 
