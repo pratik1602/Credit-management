@@ -786,7 +786,7 @@ class Generate_pdf(APIView):
                         'total_charge': all_charge_sum,
                         'total_amount': total_amount
                     }
-                    pdf = render_to_pdf("pdf_convert/withdraw.html", context)
+                    pdf = render_to_pdf("pdf_convert/withdraw.html",context)
                     if pdf:
                         response = HttpResponse(pdf, content_type='application/pdf')
                         return response
