@@ -659,60 +659,139 @@ class Generate_pdf(APIView):
                 get_request = Payment_Request.objects.get(request_id = request_id)
             except:
                 return badRequest("No request found for this request id !!!")
-            try:
+            if get_request.payment_method == "Deposit":
                 record_objs = Transaction.objects.filter(payment_request__request_id = request_id, admin = get_admin)
-            except:
-                return badRequest("No records found with given request id !!!")
-            serializer = AllTransactionRecordSerializer(record_objs, many = True)
-            # print("serializer", serializer.data)
-            paid_date = []
-            tran_id = []
-            charges_sum = []
-            total_charge = 0
-            total_payable_amount = 0
-            deposit_amount = 0
-            for i in range(len(serializer.data)):
-                due_paid_at = serializer.data[i]["due_paid_at"]
-                transaction_id = serializer.data[i]["transaction_id"]
-                charge_sum = float(serializer.data[i]["deposit_charges"]) + float(serializer.data[i]["withdraw_amount"]) + float(serializer.data[i]["profit_amount"])
-                stripped_date = due_paid_at[0:10]
-                stripped_tran_id = transaction_id[-4:]
-                paid_date.append(stripped_date)
-                tran_id.append(stripped_tran_id)
-                charges_sum.append(charge_sum)
-                serializer.data[i]["due_paid_at"] = stripped_date
-                serializer.data[i]["transaction_id"] = stripped_tran_id
-                serializer.data[i]["charge_sum"] = charge_sum
-                total_charge = charge_sum + total_charge
-                if serializer.data[i]["payment_method_flag"] == "Cycle Deposit":
-                    deposit_amount = serializer.data[i]["paid_amount"]  + deposit_amount
-            total_payable_amount = total_payable_amount + deposit_amount + total_charge
-            today = date.today()
-            context = {
-                'records' : serializer.data,
-                'admin_name' : get_admin.first_name + " " + get_admin.last_name,
-                'admin_email' : get_admin.email,
-                'admin_mobile' : get_admin.phone_no,
-                'today_date' : today.strftime("%B %d, %Y"),
-                'user_name' : get_request.user.first_name + " " + get_request.user.last_name,
-                'user_email' : get_request.user.email,
-                'user_mobile' : get_request.user.phone_no,
-                'user_card_number' : get_request.card.card_number,
-                'user_bank_name' : get_request.card.card_bank_name,
-                'payment_method': get_request.payment_method,
-                'total_charge': total_charge,
-                'total_payable_amount': total_payable_amount
-            }
-            pdf = render_to_pdf("pdf_convert/payment_summary.html", context)
-            if pdf:
-                response = HttpResponse(pdf, content_type='application/pdf')
-                # filename = "Invoice_%s.pdf" %("example")
-                # content = "inline; filename='%s'" %(filename)
-                # download = request.GET.get("download")
-                # if download:
-                #     content = "attachment; filename='%s'" %(filename)
-                # response['Content-Disposition'] = content
-                return response
-            return HttpResponse("Not found")
+                if record_objs.exists():
+                    serializer = AllTransactionRecordSerializer(record_objs, many = True)
+                    paid_date = []
+                    tran_id = []
+                    total_charge = 0
+                    total_deposit_amount = 0
+                    for i in range(len(serializer.data)):
+                        due_paid_at = serializer.data[i]["due_paid_at"]
+                        transaction_id = serializer.data[i]["transaction_id"]
+                        charge = float(serializer.data[i]["deposit_charges"]) + float(serializer.data[i]["withdraw_amount"]) + float(serializer.data[i]["profit_amount"])
+                        stripped_date = due_paid_at[0:10]
+                        stripped_tran_id = transaction_id[-4:]
+                        paid_date.append(stripped_date)
+                        tran_id.append(stripped_tran_id)
+                        serializer.data[i]["due_paid_at"] = stripped_date
+                        serializer.data[i]["transaction_id"] = stripped_tran_id
+                        serializer.data[i]["charge_sum"] = charge
+                        total_charge = charge + total_charge
+                        deposit_amount = serializer.data[i]["paid_amount"]
+                        total_deposit_amount = deposit_amount + total_deposit_amount 
+                    total_amount = total_deposit_amount + total_charge
+                    today = date.today()
+                    context = {
+                        'records' : serializer.data,
+                        'admin_name' : get_admin.first_name + " " + get_admin.last_name,
+                        'admin_email' : get_admin.email,
+                        'admin_mobile' : get_admin.phone_no,
+                        'today_date' : today.strftime("%B %d, %Y"),
+                        'user_name' : get_request.user.first_name + " " + get_request.user.last_name,
+                        'user_email' : get_request.user.email,
+                        'user_mobile' : get_request.user.phone_no,
+                        'user_card_number' : get_request.card.card_number,
+                        'user_bank_name' : get_request.card.card_bank_name,
+                        'payment_method': get_request.payment_method,
+                        'total_charge': total_charge,
+                        'total_amount': total_amount
+                    }
+                    pdf = render_to_pdf("pdf_convert/deposit.html", context)
+                    if pdf:
+                        response = HttpResponse(pdf, content_type='application/pdf')
+                        return response
+                    return HttpResponse("Not found")
+                else:
+                    return badRequest("No records found with given request id !!!")
+                
+            elif get_request.payment_method == "Cycle":
+                record_objs = Transaction.objects.filter(payment_request__request_id = request_id, admin = get_admin)
+                if record_objs.exists():
+                    serializer = AllTransactionRecordSerializer(record_objs, many = True)
+                    paid_date = []
+                    tran_id = []
+                    all_charge_sum = 0
+                    for i in range(len(serializer.data)):
+                        due_paid_at = serializer.data[i]["due_paid_at"]
+                        transaction_id = serializer.data[i]["transaction_id"]
+                        charge = float(serializer.data[i]["deposit_charges"]) + float(serializer.data[i]["withdraw_amount"]) + float(serializer.data[i]["profit_amount"])
+                        stripped_date = due_paid_at[0:10]
+                        stripped_tran_id = transaction_id[-4:]
+                        paid_date.append(stripped_date)
+                        tran_id.append(stripped_tran_id)
+                        serializer.data[i]["due_paid_at"] = stripped_date
+                        serializer.data[i]["transaction_id"] = stripped_tran_id
+                        serializer.data[i]["charge_sum"] = charge
+                        all_charge_sum = charge + all_charge_sum
+                    today = date.today()
+                    context = {
+                        'records' : serializer.data,
+                        'admin_name' : get_admin.first_name + " " + get_admin.last_name,
+                        'admin_email' : get_admin.email,
+                        'admin_mobile' : get_admin.phone_no,
+                        'today_date' : today.strftime("%B %d, %Y"),
+                        'user_name' : get_request.user.first_name + " " + get_request.user.last_name,
+                        'user_email' : get_request.user.email,
+                        'user_mobile' : get_request.user.phone_no,
+                        'user_card_number' : get_request.card.card_number,
+                        'user_bank_name' : get_request.card.card_bank_name,
+                        'payment_method': get_request.payment_method,
+                        'total_charge': all_charge_sum
+                    }
+                    pdf = render_to_pdf("pdf_convert/cycle.html", context)
+                    if pdf:
+                        response = HttpResponse(pdf, content_type='application/pdf')
+                        return response
+                    return HttpResponse("Not found")
+                else:
+                    return badRequest("No records found with given request id !!!")
+            else:
+                record_objs = Transaction.objects.filter(payment_request__request_id = request_id, admin = get_admin)
+                if record_objs.exists():
+                    serializer = AllTransactionRecordSerializer(record_objs, many = True)
+                    paid_date = []
+                    tran_id = []
+                    all_charge_sum = 0
+                    total_withdraw_amount = 0
+                    for i in range(len(serializer.data)):
+                        due_paid_at = serializer.data[i]["due_paid_at"]
+                        transaction_id = serializer.data[i]["transaction_id"]
+                        charge = float(serializer.data[i]["deposit_charges"]) + float(serializer.data[i]["withdraw_amount"]) + float(serializer.data[i]["profit_amount"])
+                        stripped_date = due_paid_at[0:10]
+                        stripped_tran_id = transaction_id[-4:]
+                        paid_date.append(stripped_date)
+                        tran_id.append(stripped_tran_id)
+                        serializer.data[i]["due_paid_at"] = stripped_date
+                        serializer.data[i]["transaction_id"] = stripped_tran_id
+                        serializer.data[i]["charge_sum"] = charge
+                        all_charge_sum = charge + all_charge_sum
+                        withdraw_amount = serializer.data[i]["paid_amount"]
+                        total_withdraw_amount = withdraw_amount + total_withdraw_amount 
+                    total_amount = total_withdraw_amount + all_charge_sum
+                    today = date.today()
+                    context = {
+                        'records' : serializer.data,
+                        'admin_name' : get_admin.first_name + " " + get_admin.last_name,
+                        'admin_email' : get_admin.email,
+                        'admin_mobile' : get_admin.phone_no,
+                        'today_date' : today.strftime("%B %d, %Y"),
+                        'user_name' : get_request.user.first_name + " " + get_request.user.last_name,
+                        'user_email' : get_request.user.email,
+                        'user_mobile' : get_request.user.phone_no,
+                        'user_card_number' : get_request.card.card_number,
+                        'user_bank_name' : get_request.card.card_bank_name,
+                        'payment_method': get_request.payment_method,
+                        'total_charge': all_charge_sum,
+                        'total_amount': total_amount
+                    }
+                    pdf = render_to_pdf("pdf_convert/withdraw.html", context)
+                    if pdf:
+                        response = HttpResponse(pdf, content_type='application/pdf')
+                        return response
+                    return HttpResponse("Not found")
+                else:
+                    return badRequest("No records found with given request id !!!")
         else:
             return unauthorisedRequest()

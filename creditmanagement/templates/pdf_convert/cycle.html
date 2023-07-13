@@ -52,7 +52,7 @@
             <tr class="panel-heading" style="padding-top: 5px; padding-bottom: 5px;">
                 <td>
                     <h3 style="text-align:center; font-size: 15px;"><strong>Payment Summary</strong></h3>
-                    <b>Payment Method :</b> {{payment_method}}
+                    <b>Payment Method :</b> Cycle
                 </td>
             </tr>
             <!-- <div class="panel-body"> -->
@@ -62,12 +62,12 @@
                         <thead>
                             <tr style="padding-bottom: 2px;">
                                 <td><strong>Transaction Id</strong></td>
-                                <td style="text-align: left;"><strong>Paid Through</strong></td>
-                                <td style="text-align: left;"><strong>Paid At</strong></td>
+                                <td style="text-align: left;"><strong>Paid/Withdraw Through</strong></td>
+                                <td style="text-align: left;"><strong>Paid/Withdraw At</strong></td>
                                 <td style="text-align: left;"><strong>Method</strong></td>
                                 <td style="text-align: left;"><strong>Payment Amount</strong></td>
-                                <td style="text-align: center;"><strong>W/D Charges</strong></td>
-                                <td style="text-align: right;"><strong>Total Paid Amount</strong></td>
+                                <td style="text-align: center;"><strong>D/W Charges</strong></td>
+                                <td style="text-align: right;"><strong>Amount with Charges</strong></td>
                             </tr>
                         </thead>
                         
@@ -93,6 +93,7 @@
                                 <td style="text-align: right;"><strong>Subtotal</strong></td>
                                 <td style="text-align: right;">670.99</td>
                             </tr> -->
+                            
                             <tr style="padding-top: 5px;">
                                 <td ></td>
                                 <td ></td>
@@ -102,15 +103,15 @@
                                 <td style="text-align: right;"><strong>Total Charges</strong></td>
                                 <td style="text-align: right;">{{total_charge}}</td>
                             </tr>
-                            <tr style="padding-top: 5px; ">
+                            <!-- <tr style="padding-top: 5px; ">
                                 <td ></td>
                                 <td ></td>
                                 <td ></td>
                                 <td ></td>
                                 <td ></td>
                                 <td style="text-align: right;"><strong>Total Amount</strong></td>
-                                <td style="text-align: right;">{{total_payable_amount}}</td>
-                            </tr>
+                                <td style="text-align: right;">{{total_amount}}</td>
+                            </tr> -->
                         </tbody>                                
                     </table>
                 </td>
