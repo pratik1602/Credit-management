@@ -94,12 +94,12 @@ class Card(models.Model):
     # card_type = models.CharField(max_length=20)
     card_category = models.CharField(max_length=20, blank = True)
     card_network = models.CharField(max_length=50)
-    card_number = models.PositiveBigIntegerField( unique=True) #validators=[validate_card_number],
+    card_number = models.PositiveBigIntegerField( unique=True,validators=[validate_card_number]) #validators=[validate_card_number],
     card_holder_name= models.CharField(max_length=100)
     frontside_card_photo = models.ImageField(upload_to= "Images\Cards\FrontSide", default="")
     backside_card_photo = models.ImageField(upload_to= "Images\Cards\BackSide", default="")
-    card_exp_date = models.DateField() #validators=[is_expired]
-    card_cvv = models.IntegerField() #validators=[validate_cvv]
+    card_exp_date = models.DateField(validators=[is_expired]) #validators=[is_expired]
+    card_cvv = models.IntegerField(validators=[validate_cvv]) #validators=[validate_cvv]
     commission = models.FloatField(validators=percentage_validators, blank=True, null=True, default=2.0, editable=True)
     # card_status = models.BooleanField(default=False)
     updated_by=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='updated_by_user', on_delete=models.SET_NULL,  null=True, blank=True)
@@ -124,7 +124,7 @@ class Payment_Request(models.Model):
     card = models.ForeignKey(Card, on_delete=models.SET_NULL, null=True, related_name="requested_card_id")
     payment_method = models.CharField(max_length=25)
     due_amount = models.FloatField(default=0, null=True, blank=True)
-    due_date = models.DateField(null=True, blank=True) #validators=[has_expired]
+    due_date = models.DateField(null=True, blank=True, validators=[has_expired]) #validators=[has_expired]
     requested_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='requested_by_user',on_delete=models.SET_NULL,  null=True, blank=True)
     payment_status = models.BooleanField(default=False)
     cycle_deposit_status = models.BooleanField(default=False)
