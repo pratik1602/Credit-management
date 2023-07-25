@@ -78,8 +78,8 @@ class AddPaymentRequestByAdmin(APIView):
                     # get_requested_obj.save() 
                     return onSuccess("Payment Request Added Successfully !!!", serializer.data)
                 else:
-                    # return badRequest(serializer.errors)
-                    return badRequest("Something went wrong !!! ")
+                    return badRequest(serializer.errors)
+                    # return badRequest("Something went wrong !!! ")
             else:
                 return badRequest("Fields is missing !!!")
         else:

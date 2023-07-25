@@ -101,7 +101,7 @@ class UserCardPayemtRecord(APIView):
                 if get_request_obj.payment_status == False:
                     if data["payment_type"] != "":
                         if data["payment_type"] == "Full payment":
-                            if data["paid_amount"] != "" and data["paid_amount"] >= get_request_obj.due_amount:
+                            if data["paid_amount"] != "" and data["paid_amount"] == get_request_obj.due_amount:
                                 if data["due_paid_through"] != "": 
                                     data["card"] = get_request_obj.card.card_id
                                     data["user"] = get_request_obj.card.user_id.id
@@ -123,7 +123,8 @@ class UserCardPayemtRecord(APIView):
                                     return badRequest("Please enter due paid through !!!")
                             else:
                                 return badRequest("Please enter valid payment amount !!!")
-                        else:
+                            
+                        elif data["payment_type"] == "Partial payment":
                             due_amount = get_request_obj.due_amount
                             get_transcation_records = Transaction.objects.filter(payment_request__request_id = data["request_id"])
                             serializer = AllTransactionRecordSerializer(get_transcation_records, many = True)
@@ -132,9 +133,10 @@ class UserCardPayemtRecord(APIView):
                                 for i in serializer.data:
                                     paid_sum += float(i["paid_amount"])
                                 all_paid_sum = float(paid_sum) + float(data["paid_amount"])
+                                print("all paid sum", all_paid_sum)
                                 # if float(all_paid_sum) <= float(due_amount):
                                 #     return badRequest("Sum amount is not matching !!!")
-                                if float(all_paid_sum) >= float(due_amount):
+                                if float(all_paid_sum) == float(due_amount):
                                     data["card"] = get_request_obj.card.card_id
                                     data["user"] = get_request_obj.card.user_id.id
                                     data["payment_request"] = get_request_obj.request_id
@@ -152,7 +154,7 @@ class UserCardPayemtRecord(APIView):
                                     else:
                                         return badRequest(serializer.errors)
                                 else:
-                                    if float(data['paid_amount']) < float(due_amount):
+                                    if float(data['paid_amount']) + float(all_paid_sum) <= float(due_amount):
                                         data["card"] = get_request_obj.card.card_id
                                         data["user"] = get_request_obj.card.user_id.id
                                         data["payment_request"] = get_request_obj.request_id
@@ -168,9 +170,9 @@ class UserCardPayemtRecord(APIView):
                                         else:
                                             return badRequest(serializer.errors)                            
                                     else:
-                                        return badRequest("You can not enter more than due amount !!!")
+                                        return badRequest("Amount is not matching.")
                             else:
-                                if float(data['paid_amount']) < float(due_amount):
+                                if float(data['paid_amount']) != float(due_amount) and float(data['paid_amount']) < float(due_amount):
                                     data["card"] = get_request_obj.card.card_id
                                     data["user"] = get_request_obj.card.user_id.id
                                     data["payment_request"] = get_request_obj.request_id
@@ -186,7 +188,9 @@ class UserCardPayemtRecord(APIView):
                                     else:
                                         return badRequest(serializer.errors)                            
                                 else:
-                                    return badRequest("You can not enter more than due amount !!!")
+                                    return badRequest("You can not enter more than or equal to due amount !!!")
+                        else:
+                            return badRequest("There is no other payment type.")
                     else:
                         return badRequest("Please select payment type !!!")
                 else:
@@ -195,10 +199,9 @@ class UserCardPayemtRecord(APIView):
             elif get_request_obj.payment_method == "Cycle":
                 if get_request_obj.payment_status == False:
                     if get_request_obj.payment_method == "Cycle" and get_request_obj.cycle_deposit_status != True: 
-                        print("if") 
                         if data["payment_type"] != "":
                             if data["payment_type"] == "Full payment":
-                                if data["paid_amount"] != "" and data["paid_amount"] >= get_request_obj.due_amount:
+                                if data["paid_amount"] != "" and data["paid_amount"] == get_request_obj.due_amount:
                                     if data["due_paid_through"] != "": 
                                         data["card"] = get_request_obj.card.card_id
                                         data["user"] = get_request_obj.card.user_id.id
@@ -215,11 +218,14 @@ class UserCardPayemtRecord(APIView):
                                             get_transaction_record.total_amount = float(get_transaction_record.paid_amount) * float(get_transaction_record.profit) + float(get_transaction_record.deposit_charges) /100 + float(get_transaction_record.paid_amount)
                                             get_transaction_record.save()
                                             return onSuccess("Full Payment record added successfully !!!", serializer.data)
+                                        else:
+                                            return badRequest(serializer.errors)
                                     else:
                                         return badRequest("Please enter due paid through !!!")
                                 else:
                                     return badRequest("Please enter valid payment amount !!!")
-                            else:
+                                
+                            elif data["payment_type"] == "Partial payment":
                                 due_amount = get_request_obj.due_amount
                                 get_transcation_records = Transaction.objects.filter(payment_request__request_id = data["request_id"])
                                 serializer = AllTransactionRecordSerializer(get_transcation_records, many = True)
@@ -230,7 +236,7 @@ class UserCardPayemtRecord(APIView):
                                     all_paid_sum = float(paid_sum) + float(data["paid_amount"])
                                     # if float(all_paid_sum) > float(due_amount):
                                     #     return badRequest("Sum amount is not matching !!!")
-                                    if float(all_paid_sum) >= float(due_amount):
+                                    if float(all_paid_sum) == float(due_amount):
                                         data["card"] = get_request_obj.card.card_id
                                         data["user"] = get_request_obj.card.user_id.id
                                         data["payment_request"] = get_request_obj.request_id
@@ -248,7 +254,7 @@ class UserCardPayemtRecord(APIView):
                                         else:
                                             return badRequest(serializer.errors)
                                     else:
-                                        if float(data['paid_amount']) < float(due_amount):
+                                        if float(data['paid_amount']) + float(all_paid_sum) <= float(due_amount):
                                             data["card"] = get_request_obj.card.card_id
                                             data["user"] = get_request_obj.card.user_id.id
                                             data["payment_request"] = get_request_obj.request_id
@@ -266,7 +272,7 @@ class UserCardPayemtRecord(APIView):
                                         else:
                                             return badRequest("You can not enter more than due amount !!!")
                                 else:
-                                    if float(data['paid_amount']) < float(due_amount):
+                                    if float(data['paid_amount']) != float(due_amount) and float(data['paid_amount']) < float(due_amount):
                                         data["card"] = get_request_obj.card.card_id
                                         data["user"] = get_request_obj.card.user_id.id
                                         data["payment_request"] = get_request_obj.request_id
@@ -283,13 +289,14 @@ class UserCardPayemtRecord(APIView):
                                             return badRequest(serializer.errors)                            
                                     else:
                                         return badRequest("You can not enter more than due amount !!!")
+                            else:
+                                return badRequest("There is no other payment type.")
                         else:
                             return badRequest("Please select payment type !!!")    
                     else:
-                        print("else")
                         if data["payment_type"] != "":
                             if data["payment_type"] == "Full payment":
-                                if data["paid_amount"] != "" and data["paid_amount"] >= get_request_obj.due_amount:
+                                if data["paid_amount"] != "" and data["paid_amount"] == get_request_obj.due_amount:
                                     if data["due_paid_through"] != "": 
                                         data["card"] = get_request_obj.card.card_id
                                         data["user"] = get_request_obj.card.user_id.id
@@ -307,11 +314,14 @@ class UserCardPayemtRecord(APIView):
                                             get_transaction_record.total_amount =  float(get_transaction_record.profit) * float(get_transaction_record.paid_amount) /100 + float(get_transaction_record.withdraw_charges) * float(get_transaction_record.paid_amount) /100 + float(get_transaction_record.paid_amount)
                                             get_transaction_record.save()
                                             return onSuccess("Full Payment record added successfully !!!", serializer.data)
+                                        else:
+                                            return badRequest(serializer.errors)
                                     else:
                                         return badRequest("Please enter due paid through !!!")
                                 else:
                                     return badRequest("Please enter valid payment amount !!!")
-                            else:
+                                
+                            elif data["payment_type"] == "Partial payment":
                                 due_amount = get_request_obj.due_amount
                                 get_transcation_records = Transaction.objects.filter(payment_request__request_id = data["request_id"])
                                 serializer = AllTransactionRecordSerializer(get_transcation_records, many = True)
@@ -322,7 +332,7 @@ class UserCardPayemtRecord(APIView):
                                     all_paid_sum = float(paid_sum) + float(data["paid_amount"])
                                     # if float(all_paid_sum) > float(due_amount):
                                     #     return badRequest("Sum amount is not matching !!!")
-                                    if float(all_paid_sum) >= float(due_amount):    
+                                    if float(all_paid_sum) == float(due_amount):    
                                         data["card"] = get_request_obj.card.card_id
                                         data["user"] = get_request_obj.card.user_id.id
                                         data["payment_request"] = get_request_obj.request_id
@@ -342,7 +352,7 @@ class UserCardPayemtRecord(APIView):
                                         else:
                                             return badRequest(serializer.errors)
                                     else:
-                                        if float(data['paid_amount']) < float(due_amount):
+                                        if float(data['paid_amount']) + float(all_paid_sum) <= float(due_amount):
                                             data["card"] = get_request_obj.card.card_id
                                             data["user"] = get_request_obj.card.user_id.id
                                             data["payment_request"] = get_request_obj.request_id
@@ -361,7 +371,7 @@ class UserCardPayemtRecord(APIView):
                                         else:
                                             return badRequest("You can not enter more than due amount !!!")
                                 else:
-                                    if float(data['paid_amount']) < float(due_amount):
+                                    if float(data['paid_amount']) != float(due_amount) and float(data['paid_amount']) < float(due_amount):
                                         data["card"] = get_request_obj.card.card_id
                                         data["user"] = get_request_obj.card.user_id.id
                                         data["payment_request"] = get_request_obj.request_id
@@ -379,6 +389,8 @@ class UserCardPayemtRecord(APIView):
                                             return badRequest(serializer.errors)                            
                                     else:
                                         return badRequest("You can not enter more than due amount !!!") 
+                            else:
+                                return badRequest("There is no other payment type.")
                         else:
                             return badRequest("Please select payment type !!!") 
                 else:
@@ -388,7 +400,7 @@ class UserCardPayemtRecord(APIView):
                 if get_request_obj.payment_status == False:
                     if data["payment_type"] != "":
                         if data["payment_type"] == "Full payment":
-                            if data["paid_amount"] != "" and data["paid_amount"] >= get_request_obj.due_amount:
+                            if data["paid_amount"] != "" and data["paid_amount"] == get_request_obj.due_amount:
                                 if data["due_paid_through"] != "": 
                                     data["card"] = get_request_obj.card.card_id
                                     data["user"] = get_request_obj.card.user_id.id
@@ -405,11 +417,13 @@ class UserCardPayemtRecord(APIView):
                                         get_transaction_record.total_amount =  float(get_transaction_record.profit) * float(get_transaction_record.paid_amount) /100 + float(get_transaction_record.withdraw_charges) * float(get_transaction_record.paid_amount) /100 + float(get_transaction_record.paid_amount)
                                         get_transaction_record.save()
                                         return onSuccess("Full Payment record added successfully !!!", serializer.data)
+                                    else:
+                                        return badRequest(serializer.errors)
                                 else:
                                     return badRequest("Please enter due paid through !!!")
                             else:
                                 return badRequest("Please enter valid payment amount !!!")
-                        else:
+                        elif data["payment_type"] == "Partial payment":
                             due_amount = get_request_obj.due_amount
                             get_transcation_records = Transaction.objects.filter(payment_request__request_id = data["request_id"])
                             serializer = AllTransactionRecordSerializer(get_transcation_records, many = True)
@@ -420,7 +434,7 @@ class UserCardPayemtRecord(APIView):
                                 all_paid_sum = float(paid_sum) + float(data["paid_amount"])
                                 # if float(all_paid_sum) > float(due_amount):
                                 #     return badRequest("Sum amount is not matching !!!")
-                                if float(all_paid_sum) >= float(due_amount):
+                                if float(all_paid_sum) == float(due_amount):
                                     data["card"] = get_request_obj.card.card_id
                                     data["user"] = get_request_obj.card.user_id.id
                                     data["payment_request"] = get_request_obj.request_id
@@ -439,7 +453,7 @@ class UserCardPayemtRecord(APIView):
                                     else:
                                         return badRequest(serializer.errors)
                                 else:
-                                    if float(data['paid_amount']) < float(due_amount):
+                                    if float(data['paid_amount']) + float(all_paid_sum) <= float(due_amount):
                                         data["card"] = get_request_obj.card.card_id
                                         data["user"] = get_request_obj.card.user_id.id
                                         data["payment_request"] = get_request_obj.request_id
@@ -458,7 +472,7 @@ class UserCardPayemtRecord(APIView):
                                     else:
                                         return badRequest("You can not enter more than due amount !!!")
                             else:
-                                if float(data['paid_amount']) < float(due_amount):
+                                if float(data['paid_amount']) != float(due_amount) and float(data['paid_amount']) < float(due_amount):
                                     data["card"] = get_request_obj.card.card_id
                                     data["user"] = get_request_obj.card.user_id.id
                                     data["payment_request"] = get_request_obj.request_id
@@ -476,10 +490,14 @@ class UserCardPayemtRecord(APIView):
                                         return badRequest(serializer.errors)                            
                                 else:
                                     return badRequest("You can not enter more than due amount !!!") 
+                        else:
+                            return badRequest("There is no other payment type.")
                     else:
                         return badRequest("Please select payment type !!!")
                 else:
                     return badRequest("Payment already done !!!")
+            else:
+                return badRequest("There is not any payment method rather than this.")
         else:   
             return unauthorisedRequest()
 
