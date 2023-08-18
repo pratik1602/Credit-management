@@ -36,7 +36,7 @@ def validate_card_number(card_number):
     if total % 10 == 0:
         return Response(True)
     else:
-        raise ValidationError ("card is Invalid !!!")
+        raise ValidationError ("card Number is Invalid !!!")
 
 
 from datetime import datetime

@@ -294,7 +294,8 @@ class UserCard(APIView):
                         getCard.save()
                         return onSuccess("Card Added Successfully !!!", serializer.data)
                     else:
-                        return badRequest("Something went wrong !!!")
+                        return badRequest(serializer.errors)
+                        # return badRequest("Something went wrong !!!")
                 else:
                     return badRequest("Card already exists !!!")                 
             else:

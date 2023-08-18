@@ -462,7 +462,7 @@ class UserProfileView(APIView):
                 return badRequest("Something went wrong !!!")
                 # return badRequest(serializer.errors)
         else:
-           return unauthorisedRequest()
+            return unauthorisedRequest()
 
     def delete(self, request):
         token = get_object(request)
@@ -627,28 +627,4 @@ class PasswordResetView(APIView):
                 return badRequest("password and confirm password doesn't match !!!")            
         else:
             return badRequest("Fields is missing !!!")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
