@@ -19,7 +19,7 @@ class TokenAuthConsumer(AsyncJsonWebsocketConsumer):
 		await self.close()
 		await self.channel_layer.group_discard('Admin_notification' , self.channel_layer)
 		raise StopConsumer()
-
+	
 	async def receive_json(self, content , **kwargs):
 		print('Message from client to server' , content)
 		print('Type of message from client to server' , type(content))
