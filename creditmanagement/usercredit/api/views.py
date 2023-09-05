@@ -18,7 +18,8 @@ from django.db.models import Q
 import re
 # from .task import *
 # from django.http import HttpResponse
-
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 #-------------- GETTING TOKENS FOR USER --------------------#
 
@@ -375,7 +376,6 @@ class RegisterUser(APIView):
                                     if serializer.is_valid():
                                         serializer.save()
                                         send_otp_via_email(serializer.data['email'])
-
                                         return onSuccess("Registration Successful. Please check your email for verification", serializer.data)
                                     else:
                                         return badRequest("Something went wrong !!!")
@@ -628,3 +628,15 @@ class PasswordResetView(APIView):
         else:
             return badRequest("Fields is missing !!!")
 
+class websocket(APIView):
+    def get(self , request):
+        channel_layer = get_channel_layer()
+        # async_to_sync(channel_layer.group_send)('Admin_notification')
+        async_to_sync(channel_layer.group_send)(
+            'Admin_notification',
+            {
+                'type': 'chat.message',
+                'message': 'New user register successfully.'
+            }
+        )
+        return onSuccess("Notification send successfully.", 1)

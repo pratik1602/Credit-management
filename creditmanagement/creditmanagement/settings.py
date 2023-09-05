@@ -58,6 +58,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     "admin_interface",
     "colorfield",
     'django.contrib.admin',
@@ -75,7 +76,8 @@ INSTALLED_APPS = [
     'usercredit.apps.UsercreditConfig',
     'cards.apps.CardsConfig',
     'transaction.apps.TransactionConfig',
-    'PaymentRequest.apps.PaymentrequestConfig'
+    'PaymentRequest.apps.PaymentrequestConfig',
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -113,6 +115,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'creditmanagement.wsgi.application' 
+ASGI_APPLICATION  = 'creditmanagement.asgi.application' 
 
 REST_FRAMEWORK = {
     # 'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -290,3 +293,12 @@ CLOUDINARY_STORAGE = {
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("localhost", 6379)],
+        },
+    },
+}

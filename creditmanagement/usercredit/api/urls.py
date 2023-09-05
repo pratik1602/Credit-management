@@ -85,5 +85,7 @@ urlpatterns = [
     #---- EDIT USER'S PROFILE (ADMIN ACCESS)
     path('edit-user-profile', EditUserProfile.as_view(), name="EditUserProfile"),
 
+    #--- Admin notification
+    path('admin-notification' , websocket.as_view() , name='websocket'),
     
 ]
