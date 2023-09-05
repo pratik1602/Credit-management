@@ -635,7 +635,7 @@ class websocket(APIView):
         async_to_sync(channel_layer.group_send)(
             'Admin_notification',
             {
-                'type': 'chat.message',
+                'type': 'chat_message',
                 'message': 'New user register successfully.'
             }
         )
