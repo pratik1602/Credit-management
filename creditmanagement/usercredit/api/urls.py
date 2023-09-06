@@ -85,7 +85,10 @@ urlpatterns = [
     #---- EDIT USER'S PROFILE (ADMIN ACCESS)
     path('edit-user-profile', EditUserProfile.as_view(), name="EditUserProfile"),
 
+    # Following path is only for test purpose
     #--- Admin notification
-    path('admin-notification' , websocket.as_view() , name='websocket'),
-    
+    # path('admin-notification' , websocket.as_view() , name='websocket'),
+
+    # Get new register user details for admin only
+    path('new-user-details' , GetNewRegisterUserDetails.as_view() , name='GetNewRegisterUserDetails'),
 ]

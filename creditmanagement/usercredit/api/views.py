@@ -16,6 +16,7 @@ from email import *
 from core.response import *
 from django.db.models import Q
 import re
+import uuid
 # from .task import *
 # from django.http import HttpResponse
 from channels.layers import get_channel_layer
@@ -417,6 +418,19 @@ class VerifyUserOTP(APIView):
                     user = user.first()
                     user.otp_verified = True
                     user.save()
+                    channel_layer = get_channel_layer()
+                    async_to_sync(channel_layer.group_send)(
+                        'Admin_notification',
+                        {
+                            'type': 'chat.message',
+                            '_id': str(user.id),
+                            'f_name': str(user.first_name),
+                            'l_name': str(user.last_name),
+                            # 'message': {
+                            #     'id': str(user.id)
+                            # },
+                        }
+                    )
                     return onSuccess("OTP Verified Successfully !!!", 1)
                 else :
                     return badRequest("Something went wrong !!!")
@@ -628,15 +642,40 @@ class PasswordResetView(APIView):
         else:
             return badRequest("Fields is missing !!!")
 
-class websocket(APIView):
+@authentication_classes([])
+@permission_classes([])
+class GetNewRegisterUserDetails(APIView):
+    
     def get(self , request):
-        channel_layer = get_channel_layer()
-        # async_to_sync(channel_layer.group_send)('Admin_notification')
-        async_to_sync(channel_layer.group_send)(
-            'Admin_notification',
-            {
-                'type': 'chat_message',
-                'message': 'New user register successfully.'
-            }
-        )
-        return onSuccess("Notification send successfully.", 1)
+        token = get_object(request)
+        if token:
+            try:
+                get_admin = User.objects.get(id = token["user_id"], is_admin= True)
+            except:
+                return badRequest('Admin not found.')
+            data = request.data
+            if data['id']:
+                try:
+                    get_user = User.objects.get(id = data['id'], otp_verified = True)
+                except:
+                    return badRequest('User not found !!!')
+                serializer = UserProfileSerializer(get_user)
+                return onSuccess("User Profile !!!", serializer.data)
+            else:
+                return badRequest('Invalid id !!!')
+        else:
+            return unauthorisedRequest()
+
+# Flowwing code is only for teesting purpose
+# class websocket(APIView):
+#     def get(self , request):
+#         channel_layer = get_channel_layer()
+#         # async_to_sync(channel_layer.group_send)('Admin_notification')
+#         async_to_sync(channel_layer.group_send)(
+#             'Admin_notification',
+#             {
+#                 'type': 'chat.message',
+#                 'message': 'New user register successfully.'
+#             }
+#         )
+#         return onSuccess("Notification send successfully.", 1)
